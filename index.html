@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>학과 단체행사 계획 현황판 — 유한대학교</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ── CSS VARIABLES ── */
+:root {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --text1: #1e293b;
+  --text2: #64748b;
+  --accent: #3b6ff0;
+  --accent2: #6366f1;
+  --radius: 14px;
+  --shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text1); font-size: 13px; }
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg,#1e3a8a 0%,#3b6ff0 60%,#6366f1 100%);
+  color: #fff; padding: 0 28px;
+  display: flex; align-items: center; gap: 14px;
+  height: 56px; position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(59,111,240,.3);
+}
+.header-logo { font-size: 20px; }
+.header-title { font-size: 16px; font-weight: 900; letter-spacing: -.3px; }
+.header-sub { font-size: 11px; opacity: .75; margin-left: 4px; }
+.header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.update-time { font-size: 11px; opacity: .7; }
+.btn-print { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); color: #fff; border-radius: 8px; padding: 5px 12px; font-size: 11.5px; font-weight: 700; cursor: pointer; }
+.btn-print:hover { background: rgba(255,255,255,.25); }
+
+/* ── NAV TABS ── */
+.nav-tabs { display: flex; gap: 4px; padding: 10px 20px 0; background: var(--surface); border-bottom: 1px solid var(--border); }
+.tab-btn { background: none; border: none; border-bottom: 3px solid transparent; padding: 10px 20px; font-size: 13px; font-weight: 700; color: var(--text2); cursor: pointer; border-radius: 8px 8px 0 0; transition: all .15s; }
+.tab-btn:hover { background: var(--bg); color: var(--text1); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--bg); }
+
+/* ── MAIN CONTENT ── */
+main { padding: 16px 20px; max-width: 1600px; margin: 0 auto; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* ── KPI CARDS ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 10px; margin-bottom: 14px; }
+.kpi-card {
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+  padding: 14px 16px; cursor: default; transition: transform .12s;
+}
+.kpi-card:hover { transform: translateY(-2px); }
+.kpi-card.clickable { cursor: pointer; }
+.kpi-icon { font-size: 18px; margin-bottom: 6px; }
+.kpi-label { font-size: 10.5px; color: var(--text2); font-weight: 600; margin-bottom: 4px; }
+.kpi-val { font-size: 26px; font-weight: 900; line-height: 1; }
+.kpi-sub { font-size: 10px; color: var(--text2); margin-top: 3px; }
+
+/* ── MISSING PANEL ── */
+.missing-panel {
+  display: none; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 16px 20px; margin-bottom: 14px;
+}
+.missing-panel.open { display: block; }
+.missing-panel-title { font-size: 12px; font-weight: 800; color: var(--text2); margin-bottom: 10px; }
+.missing-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.missing-col-title { font-size: 10.5px; font-weight: 800; color: var(--accent); margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+.missing-item { font-size: 11px; color: var(--text2); padding: 2px 0; }
+
+/* ── CHARTS ── */
+.charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.chart-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 16px 18px; }
+.chart-title { font-size: 12px; font-weight: 800; color: var(--text2); margin-bottom: 12px; }
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.bar-label { font-size: 11.5px; width: 50px; text-align: right; flex-shrink: 0; color: var(--text2); }
+.bar-track { flex: 1; height: 18px; background: var(--bg); border-radius: 6px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 6px; transition: width .4s ease; display: flex; align-items: center; padding-left: 6px; font-size: 10px; font-weight: 700; color: #fff; }
+.bar-count { font-size: 11px; font-weight: 700; width: 22px; text-align: right; }
+
+/* ── TABLE CARD ── */
+.table-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+.dash-controls { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.search-box { border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; font-size: 12px; outline: none; min-width: 220px; }
+.search-box:focus { border-color: var(--accent); }
+.filter-btn { border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 11.5px; font-weight: 700; cursor: pointer; color: var(--text2); }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.sort-btn { border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 11.5px; font-weight: 700; cursor: pointer; color: var(--text2); }
+.sort-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+table { width: 100%; border-collapse: collapse; }
+th { padding: 10px 12px; font-size: 11px; font-weight: 800; color: var(--text2); text-align: left; background: var(--bg); border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 9px 12px; font-size: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #f8fafc; }
+.row-num { color: var(--text2); font-size: 11px; width: 28px; }
+.dept-name { font-weight: 700; font-size: 12.5px; }
+.major-name { font-size: 10.5px; color: var(--text2); margin-top: 1px; }
+.badge-plan { display: inline-flex; align-items: center; gap: 4px; border-radius: 12px; padding: 3px 8px; font-size: 10.5px; font-weight: 700; }
+.badge-yes { background: #d1fae5; color: #065f46; }
+.badge-no  { background: #fee2e2; color: #991b1b; }
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.d-day { font-size: 10px; font-weight: 800; background: var(--accent); color: #fff; border-radius: 6px; padding: 1px 5px; margin-left: 4px; }
+.d-day.past { background: #94a3b8; }
+.student-count { font-weight: 800; color: #059669; }
+.teacher-text { font-size: 11px; color: var(--text2); max-width: 180px; }
+
+/* ── CALENDAR ── */
+.cal-region-bar { margin-bottom: 10px; }
+.cal-region-bar-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11.5px; }
+.cal-region-bar-label { font-weight: 700; color: var(--accent); }
+.cal-region-reset { background: #fee2e2; color: #991b1b; border: none; border-radius: 8px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
+.cal-region-chips-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.cal-region-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 11.5px; font-weight: 700;
+  cursor: pointer; border: 2px solid;
+  transition: all .15s;
+}
+.cal-region-chip:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.cal-region-chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.cal-region-chip-cnt { font-size: 10px; background: rgba(0,0,0,.08); border-radius: 10px; padding: 1px 5px; }
+
+.cal-nav { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+.cal-nav-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-size: 18px; cursor: pointer; color: var(--text2); }
+.cal-nav-btn:hover { background: var(--bg); }
+.cal-month-title { font-size: 18px; font-weight: 900; }
+.cal-grid { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 10px; }
+.cal-dow-row { display: grid; grid-template-columns: repeat(7,1fr); background: var(--bg); border-bottom: 1px solid var(--border); }
+.cal-dow { text-align: center; padding: 8px; font-size: 11px; font-weight: 800; color: var(--text2); }
+.cal-body { display: grid; grid-template-columns: repeat(7,1fr); }
+.cal-cell {
+  min-height: 120px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  padding: 5px 6px; position: relative;
+}
+.cal-cell:nth-child(7n) { border-right: none; }
+.cal-cell.other-month { background: #fafafa; }
+.cal-cell.today { background: #eff6ff; }
+.cal-date-num { font-size: 11px; font-weight: 700; margin-bottom: 3px; }
+.cal-cell.today .cal-date-num { background: var(--accent); color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10.5px; }
+.cal-cell.sun .cal-date-num { color: #ef4444; }
+.cal-cell.sat .cal-date-num { color: #3b6ff0; }
+.cal-event {
+  border-radius: 5px; padding: 2px 5px; margin-bottom: 2px; font-size: 10px;
+  cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: flex; align-items: center; gap: 3px;
+}
+.cal-event:hover { opacity: .85; }
+.ev-day-badge { font-size: 9px; font-weight: 900; border-radius: 4px; padding: 0 3px; flex-shrink: 0; }
+.cal-legend { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.cal-legend-label { font-size: 11px; font-weight: 800; color: var(--text2); margin-right: 4px; }
+.cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; }
+.cal-legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+/* ── MAP ── */
+.map-container {
+  display: grid; grid-template-columns: 6fr 4fr;
+  gap: 0; align-items: stretch;
+  height: calc(100vh - 130px); min-height: 620px; max-height: 860px;
+}
+.map-card {
+  background: var(--surface); border-radius: var(--radius) 0 0 var(--radius);
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.map-card-header {
+  padding: 12px 18px; border-bottom: 1px solid var(--border);
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+}
+.map-img-wrap {
+  position: relative; flex: 1; overflow: hidden;
+  background: linear-gradient(160deg,#d4eaf7 0%,#c8e6f0 40%,#d8f0e8 100%);
+}
+.map-bg-img { position: absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; }
+.map-pin-svg { position: absolute; top:0; left:0; width:100%; height:100%; }
+.map-pin { pointer-events: all; }
+
+.map-right-panel {
+  border: 1px solid var(--border); border-left: none;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--surface); box-shadow: var(--shadow);
+  display: flex; flex-direction: column; overflow: hidden; height: 100%;
+}
+.map-right-header {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0; display: flex; flex-direction: column; gap: 2px;
+}
+.map-right-header span:first-child { font-size: 13px; font-weight: 800; }
+.map-right-hint { font-size: 10.5px; color: var(--text2); }
+.map-event-list { flex: 1; overflow-y: auto; }
+
+/* map-region-section */
+.map-region-section { border-bottom: 2px solid var(--border); }
+.map-region-section-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--surface); z-index: 1;
+}
+.map-region-section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.map-region-section-name { font-size: 13px; font-weight: 700; }
+.map-region-section-count { margin-left: auto; font-size: 11px; font-weight: 700; background: rgba(0,0,0,.07); border-radius: 10px; padding: 2px 8px; }
+
+/* map-ev-card */
+.map-ev-card { padding: 10px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .12s; }
+.map-ev-card:hover { background: var(--bg); }
+.map-ev-card-last { border-bottom: none; }
+.map-ev-card-dept { font-size: 13px; font-weight: 700; line-height: 1.3; }
+.map-ev-card-major { font-size: 10.5px; color: var(--text2); margin-top: 1px; margin-bottom: 5px; }
+.map-ev-card-row { display: flex; align-items: flex-start; gap: 5px; font-size: 11px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+.map-ev-card-row-icon { flex-shrink: 0; }
+.map-ev-card-students { margin-top: 5px; font-size: 11px; font-weight: 700; color: #059669; background: #d1fae5; border-radius: 6px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 3px; }
+
+/* map bottom legend */
+.map-bottom-legend { margin-top: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.map-bottom-legend-title { font-size: 11px; font-weight: 800; color: var(--text2); width: 100%; margin-bottom: 2px; }
+.map-bottom-chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 20px; padding: 5px 12px; font-size: 11.5px; font-weight: 700; cursor: pointer; border: 2px solid; transition: all .15s; }
+.map-bottom-chip:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.map-bottom-chip-dot { width: 8px; height: 8px; border-radius: 50%; }
+.map-bottom-chip-count { font-size: 10px; opacity: .8; }
+
+/* ── FILTER PANELS (전체목록) ── */
+.list-filter-panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 10px 16px; margin-bottom: 10px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.list-filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.list-filter-label { font-size: 11px; font-weight: 700; color: var(--text2); white-space: nowrap; min-width: 52px; flex-shrink: 0; }
+.list-region-bar, .list-month-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.month-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 700;
+  cursor: pointer; border: 2px solid #94a3b8; color: #64748b;
+  background: var(--surface); transition: all .15s;
+}
+.month-chip:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.month-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(59,111,240,.3); }
+.month-chip-cnt { font-size: 10px; background: rgba(0,0,0,.08); border-radius: 10px; padding: 1px 5px; }
+.month-chip.active .month-chip-cnt { background: rgba(255,255,255,.25); }
+.month-reset { font-size: 11px; font-weight: 700; background: #f1f5f9; color: #64748b; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; }
+.month-reset:hover { background: #e2e8f0; }
+
+/* ── FULL LIST CONTROLS ── */
+.full-list-controls { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+
+/* ── PRINT HEADER ── */
+.print-header { display: none; }
+
+/* ── PRINT STYLES ── */
+@media print {
+  .header, .nav-tabs, .list-filter-panel, .full-list-controls,
+  .map-bottom-legend, .cal-region-bar, .btn-print { display: none !important; }
+  .print-header { display: flex !important; align-items: center; gap: 12px; margin-bottom: 14px; border-bottom: 2px solid #1e3a8a; padding-bottom: 10px; }
+  .print-header-logo { font-size: 20px; }
+  .print-header-title { font-size: 15px; font-weight: 900; color: #1e3a8a; }
+  .tab-pane { display: none !important; }
+  .tab-pane.active { display: block !important; }
+  main { padding: 0 !important; }
+  body { background: #fff !important; }
+  .kpi-grid { grid-template-columns: repeat(7,1fr); }
+}
+body.print-landscape .map-container { grid-template-columns: 1fr !important; gap: 10px !important; }
+body.print-landscape .map-right-panel { position: static !important; max-height: 320px !important; height: 320px; overflow: visible !important; }
+body.print-landscape .map-img-wrap { min-height: 280px !important; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1200px) {
+  .kpi-grid { grid-template-columns: repeat(4,1fr); }
+  .map-container { grid-template-columns: 6fr 4fr; }
+}
+@media (max-width: 768px) {
+  .kpi-grid { grid-template-columns: repeat(2,1fr); }
+  .map-container { grid-template-columns: 3fr 2fr; height: auto; min-height: 500px; }
+  .charts-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- PRINT HEADER -->
+<div class="print-header" id="printHeader">
+  <div class="print-header-logo">🏫</div>
+  <div>
+    <div class="print-header-title">유한대학교 학과 단체행사 계획 현황판 — 2026학년도 1학기</div>
+    <div style="font-size:11px;color:#64748b" id="printDate">인쇄일: </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-logo">🏫</div>
+  <div>
+    <div class="header-title">학과 단체행사 계획 현황판</div>
+    <div class="header-sub">2026학년도 1학기 · 학생복지팀</div>
+  </div>
+  <div class="header-right">
+    <span class="update-time" id="updateTime">업데이트: 2026. 3. 13.</span>
+    <label style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:5px 12px;font-size:11.5px;font-weight:700;cursor:pointer;">
+      📥 CSV 업데이트 <input type="file" accept=".csv" style="display:none" onchange="handleCSV(event)">
+    </label>
+    <button class="btn-print" onclick="printCurrentTab()">🖨️ 인쇄</button>
+  </div>
+</header>
+
+<!-- NAV TABS -->
+<nav class="nav-tabs">
+  <button class="tab-btn active" onclick="switchTab('dashboard',this)">📊 대시보드</button>
+  <button class="tab-btn" onclick="switchTab('calendar',this)">📅 캘린더</button>
+  <button class="tab-btn" onclick="switchTab('map',this)">🗺️ 지도</button>
+  <button class="tab-btn" onclick="switchTab('list',this)">📋 전체목록</button>
+</nav>
+
+<main>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div id="tab-dashboard" class="tab-pane active">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon">🏫</div>
+        <div class="kpi-label">대상 전공</div>
+        <div class="kpi-val" id="kpi-target">42</div>
+        <div class="kpi-sub">개 전공·학과</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📋</div>
+        <div class="kpi-label">설문 응답</div>
+        <div class="kpi-val" id="kpi-total">0</div>
+        <div class="kpi-sub">개 전공·학과</div>
+      </div>
+      <div class="kpi-card clickable" onclick="toggleMissingList()">
+        <div class="kpi-icon">⚠️</div>
+        <div class="kpi-label">미응답 전공</div>
+        <div class="kpi-val" id="kpi-missing" style="color:#ef4444">0</div>
+        <div class="kpi-sub">클릭하여 확인</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-label">계획 있음</div>
+        <div class="kpi-val" id="kpi-yes" style="color:#059669">0</div>
+        <div class="kpi-sub">개 전공·학과</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">❌</div>
+        <div class="kpi-label">계획 없음</div>
+        <div class="kpi-val" id="kpi-no" style="color:#ef4444">0</div>
+        <div class="kpi-sub">개 전공·학과</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📅</div>
+        <div class="kpi-label">이번달 행사</div>
+        <div class="kpi-val" id="kpi-this-month" style="color:#f97316">0</div>
+        <div class="kpi-sub" id="kpi-month-label">월 기준</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">👥</div>
+        <div class="kpi-label">참여예정 학생</div>
+        <div class="kpi-val" id="kpi-students" style="color:#3b6ff0">0</div>
+        <div class="kpi-sub">명 예정</div>
+      </div>
+    </div>
+
+    <!-- 미응답 패널 -->
+    <div class="missing-panel" id="missingPanel">
+      <div class="missing-panel-title">⚠️ 미응답 전공 목록</div>
+      <div class="missing-grid" id="missingGrid"></div>
+    </div>
+
+    <!-- 차트 -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">📅 월별 행사 분포</div>
+        <div id="monthChart"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">🗺️ 지역별 행사 분포</div>
+        <div id="regionChart"></div>
+      </div>
+    </div>
+
+    <!-- 행사 계획 테이블 -->
+    <div class="dash-controls">
+      <input class="search-box" type="text" placeholder="학과명 / 장소 / 교원 검색..." oninput="dashSearch=this.value;renderDashTable(RAW_DATA)">
+      <button class="filter-btn active" onclick="setDashFilter('all',this)">전체</button>
+      <button class="filter-btn" onclick="setDashFilter('yes',this)">계획있음</button>
+      <button class="filter-btn" onclick="setDashFilter('no',this)">계획없음</button>
+    </div>
+    <div class="table-card">
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>학과 / 전공</th><th>계획</th><th>일정</th><th>장소</th><th>인솔교원</th><th>학생 현황</th>
+            </tr>
+          </thead>
+          <tbody id="dashTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CALENDAR ===== -->
+  <div id="tab-calendar" class="tab-pane">
+    <div class="cal-region-bar" id="calRegionBar"></div>
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">&#8249;</button>
+      <div class="cal-month-title" id="calMonthTitle">2026년 3월</div>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">&#8250;</button>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-dow-row">
+        <div class="cal-dow">일</div><div class="cal-dow">월</div><div class="cal-dow">화</div>
+        <div class="cal-dow">수</div><div class="cal-dow">목</div><div class="cal-dow">금</div><div class="cal-dow">토</div>
+      </div>
+      <div class="cal-body" id="calBody"></div>
+    </div>
+    <div class="cal-legend" id="calLegend"></div>
+  </div>
+
+  <!-- ===== MAP ===== -->
+  <div id="tab-map" class="tab-pane">
+    <div class="map-container">
+      <!-- LEFT: 지도 -->
+      <div class="map-card">
+        <div class="map-card-header">🗺️ 전국 행사 지역 현황 <span style="font-size:11px;font-weight:400;color:var(--text2);margin-left:6px;">핀 클릭 시 해당 지역 목록 강조</span></div>
+        <div class="map-img-wrap" id="mapImgWrap">
+          <!-- 한국 지도 SVG -->
+          <svg class="map-bg-img" viewBox="0 0 800 750" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="provShadow" x="-5%" y="-5%" width="110%" height="110%">
+                <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="rgba(0,0,0,0.15)"/>
+              </filter>
+              <linearGradient id="seaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#b8d8f0"/>
+                <stop offset="100%" style="stop-color:#c8e8f8"/>
+              </linearGradient>
+            </defs>
+            <!-- 바다 배경 -->
+            <rect width="800" height="750" fill="url(#seaGrad)"/>
+            <!-- 바다 이름 -->
+            <text x="100" y="450" text-anchor="middle" font-size="14" fill="#5a9abf" font-family="Noto Sans KR,sans-serif" font-weight="700" opacity=".7">서해</text>
+            <text x="100" y="465" text-anchor="middle" font-size="9" fill="#5a9abf" font-family="sans-serif" opacity=".7">West Sea</text>
+            <text x="690" y="350" text-anchor="middle" font-size="14" fill="#5a9abf" font-family="Noto Sans KR,sans-serif" font-weight="700" opacity=".7">동해</text>
+            <text x="690" y="365" text-anchor="middle" font-size="9" fill="#5a9abf" font-family="sans-serif" opacity=".7">East Sea</text>
+            <text x="400" y="710" text-anchor="middle" font-size="13" fill="#5a9abf" font-family="Noto Sans KR,sans-serif" font-weight="700" opacity=".7">남해 South Sea</text>
+            <!-- 경기도 -->
+            <path d="M268,148 L338,128 L388,138 L428,158 L448,188 L428,228 L388,238 L338,248 L288,238 L258,208 L248,178 Z" fill="#a8c8e8" stroke="#fff" stroke-width="2" filter="url(#provShadow)"/>
+            <text x="338" y="188" text-anchor="middle" font-size="13" fill="#2a4a6a" font-family="Noto Sans KR,sans-serif" font-weight="700">경기도</text>
+            <text x="338" y="200" text-anchor="middle" font-size="8" fill="#2a4a6a" font-family="sans-serif">Gyeonggi-do</text>
+            <!-- 강원도 -->
+            <path d="M388,108 L518,88 L568,118 L578,168 L548,208 L498,228 L448,218 L428,188 L428,158 L388,138 Z" fill="#b8d8a8" stroke="#fff" stroke-width="2" filter="url(#provShadow)"/>
+            <text x="488" y="160" text-anchor="middle" font-size="13" fill="#2a4a2a" font-family="Noto Sans KR,sans-serif" font-weight="700">강원도</text>
+            <text x="488" y="173" text-anchor="middle" font-size="8" fill="#2a4a2a" font-family="sans-serif">Gangwon-do</text>
+            <!-- 서울 -->
+            <ellipse cx="300" cy="188" rx="20" ry="15" fill="#e87060" stroke="#fff" stroke-width="1.5"/>
+            <text x="300" y="192" text-anchor="middle" font-size="9" fill="#fff" font-family="Noto Sans KR,sans-serif" font-weight="800">서울</text>
+            <!-- 인천 -->
+            <ellipse cx="238" cy="198" rx="18" ry="13" fill="#6090e0" stroke="#fff" stroke-width="1.5"/>
+            <text x="238" y="202" text-anchor="middle" font-size="9" fill="#fff" font-family="Noto Sans KR,sans-serif" font-weight="800">인천</text>
+            <!-- 충청북도 -->
+            <path d="M338,248 L388,238 L448,248 L458,298 L428,338 L378,348 L328,338 L308,298 L318,268 Z" fill="#d8c8a8" stroke="#fff" stroke-width="2" filter="url(#provShadow)"/>
+            <text x="388" y="298" text-anchor="middle" font-size="11" fill="#4a3a1a" font-family="Noto Sans KR,sans-serif" font-weight="700">충청북도</text>
+            <text x="388" y="310" text-anchor="middle" font-size="7" fill="#4a3a1a" font-family="sans-serif">Chungcheongbuk</text>
+            <!-- 충청남도 -->
+            <path d="M178,238 L258,218 L288,238 L308,298 L288,348 L238,378 L178,368 L148,318 L148,278 Z" fill="#e8d898" stroke="#fff" stroke-width="2" filter="url(#provShadow)"/>
+            <text x="228" y="308" text-anchor="middle" font-size="12" fill="#3a2a0a" font-family="Noto Sans KR,sans-serif" font-weight="700">충청도</text>
+            <text x="228" y="320" text-anchor="middle" font-size="7" fill="#3a2a0a" font-family="sans-serif">Chungcheong-do</text>
+            <!-- 대전 -->
+            <ellipse cx="288" cy="348" rx="16" ry="12" fill="#d06848" stroke="#fff" stroke-width="1.5"/>
+            <text x="288" y="352" text-anchor="middle" font-size="8" fill="#fff" font-family="Noto Sans KR,sans-serif" font-weight="700">대전</text>
+            <!-- 전라북도 -->
+            <path d="M178,368 L238,378 L288,368 L308,418 L288,468 L238,488 L178,488 L148,448 L148,408 Z" fill="#c8d8b8" stroke="#fff" stroke-width="2" filter="url(#provShadow)"/>
+            <text x="228" y="438" text-anchor="middle" font-size="12" fill="#2a3a1a" font-family="Noto Sans KR,sans-serif" font-weight="700">전라도</text>
+            <text x="228" y="450" text-anchor="middle" font-size="7" fill="#2a3a1a" font-family="sans-serif">Jeolla-do</text>
+            <!-- 전라남도 -->
+            <path d="M148,488 L238,488 L288,508 L278,558 L238,588 L178,598 L138,568 L118,518 Z" fill="#b8c8a8" stroke="#fff" stroke-width="2" filter="url(#provShadow)"/>
+            <!-- 경상북도 -->
+            <path d="M428,248 L548,228 L598,268 L608,338 L578,388 L528,408 L468,398 L428,368 L428,338 L458,298 Z" fill="#d8c8d8" stroke="#fff" stroke-width="2" filter="url(#provShadow)"/>
+            <text x="518" y="328" text-anchor="middle" font-size="12" fill="#3a2a3a" font-family="Noto Sans KR,sans-serif" font-weight="700">경상북도</text>
+            <text x="518" y="340" text-anchor="middle" font-size="7" fill="#3a2a3a" font-family="sans-serif">Gyeongsangbuk-do</text>
+            <!-- 대구 -->
+            <ellipse cx="498" cy="388" rx="16" ry="12" fill="#c060a0" stroke="#fff" stroke-width="1.5"/>
+            <text x="498" y="392" text-anchor="middle" font-size="8" fill="#fff" font-family="Noto Sans KR,sans-serif" font-weight="700">대구</text>
+            <!-- 경상남도 -->
+            <path d="M378,408 L468,398 L528,408 L558,448 L538,498 L488,528 L428,528 L378,498 L358,458 Z" fill="#c8b8d8" stroke="#fff" stroke-width="2" filter="url(#provShadow)"/>
+            <text x="458" y="468" text-anchor="middle" font-size="12" fill="#3a2a4a" font-family="Noto Sans KR,sans-serif" font-weight="700">경상남도</text>
+            <text x="458" y="480" text-anchor="middle" font-size="7" fill="#3a2a4a" font-family="sans-serif">Gyeongsangnam-do</text>
+            <!-- 울산 -->
+            <ellipse cx="558" cy="418" rx="16" ry="12" fill="#a070c0" stroke="#fff" stroke-width="1.5"/>
+            <text x="558" y="422" text-anchor="middle" font-size="8" fill="#fff" font-family="Noto Sans KR,sans-serif" font-weight="700">울산</text>
+            <!-- 부산 -->
+            <ellipse cx="538" cy="488" rx="20" ry="13" fill="#9058b0" stroke="#fff" stroke-width="1.5"/>
+            <text x="538" y="492" text-anchor="middle" font-size="9" fill="#fff" font-family="Noto Sans KR,sans-serif" font-weight="800">부산</text>
+            <!-- 광주 -->
+            <ellipse cx="198" cy="508" rx="16" ry="12" fill="#4aaa88" stroke="#fff" stroke-width="1.5"/>
+            <text x="198" y="512" text-anchor="middle" font-size="8" fill="#fff" font-family="Noto Sans KR,sans-serif" font-weight="700">광주</text>
+            <!-- 세종 -->
+            <ellipse cx="308" cy="328" rx="14" ry="10" fill="#e0a030" stroke="#fff" stroke-width="1.5"/>
+            <text x="308" y="332" text-anchor="middle" font-size="7.5" fill="#fff" font-family="Noto Sans KR,sans-serif" font-weight="800">세종</text>
+            <!-- 제주도 -->
+            <ellipse cx="258" cy="638" rx="70" ry="35" fill="#7ec8a8" stroke="#fff" stroke-width="2" filter="url(#provShadow)"/>
+            <text x="258" y="642" text-anchor="middle" font-size="13" fill="#1a5a3a" font-family="Noto Sans KR,sans-serif" font-weight="700">제주도 Jeju</text>
+            <!-- 울릉도 -->
+            <ellipse cx="638" cy="178" rx="18" ry="22" fill="#a8d5a2" stroke="#fff" stroke-width="1.5"/>
+            <text x="638" y="176" text-anchor="middle" font-size="8.5" fill="#2a5a2a" font-family="Noto Sans KR,sans-serif" font-weight="700">울릉도</text>
+            <!-- 독도 -->
+            <circle cx="678" cy="248" r="6" fill="#a8d5a2" stroke="#fff" stroke-width="1"/>
+            <text x="678" y="262" text-anchor="middle" font-size="7.5" fill="#2a5a2a" font-family="Noto Sans KR,sans-serif">독도</text>
+            <!-- 유한대학교 -->
+            <circle cx="268" cy="198" r="7" fill="#3b6ff0" stroke="#fff" stroke-width="2.5"/>
+            <text x="268" y="220" text-anchor="middle" font-size="8.5" fill="#3b6ff0" font-family="Noto Sans KR,sans-serif" font-weight="800">유한대학교</text>
+            <!-- 나침반 -->
+            <g transform="translate(698,660)">
+              <circle r="18" fill="white" stroke="#ccc" stroke-width="1" opacity=".9"/>
+              <text y="-6" text-anchor="middle" font-size="9" fill="#333" font-weight="800">N</text>
+              <text y="12" text-anchor="middle" font-size="7" fill="#999">S</text>
+              <polygon points="0,-10 2,0 0,3 -2,0" fill="#e74c3c"/>
+              <polygon points="0,10 2,0 0,-3 -2,0" fill="#aaa"/>
+            </g>
+            <!-- 범례 -->
+            <g transform="translate(20,658)">
+              <rect width="110" height="56" rx="6" fill="white" opacity=".85" stroke="#ccc" stroke-width="1"/>
+              <rect x="8" y="10" width="10" height="10" rx="2" fill="#a8c8e8"/>
+              <text x="22" y="19" font-size="8" fill="#333" font-family="Noto Sans KR,sans-serif">지도톡</text>
+              <circle cx="13" cy="30" r="5" fill="#e87060"/>
+              <text x="22" y="34" font-size="8" fill="#333" font-family="Noto Sans KR,sans-serif">시근적</text>
+              <circle cx="13" cy="46" r="6" fill="#f97316" stroke="#fff" stroke-width="1.5"/>
+              <text x="22" y="50" font-size="8" fill="#333" font-family="Noto Sans KR,sans-serif">행사핀</text>
+            </g>
+          </svg>
+          <!-- PIN SVG -->
+          <svg class="map-pin-svg" id="mapPinSvg" viewBox="0 0 800 750" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <filter id="pinShadow" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.3)"/>
+              </filter>
+            </defs>
+            <!-- PIN: 충남 태안 (6건) cx=180,cy=308 -->
+            <g class="map-pin" onclick="showRegionDetail('충남 태안')" style="cursor:pointer">
+              <circle cx="163" cy="318" r="24" fill="#ef4444" stroke="#fff" stroke-width="3" filter="url(#pinShadow)"/>
+              <text x="163" y="324" text-anchor="middle" font-size="17" font-weight="900" fill="white" font-family="Noto Sans KR,sans-serif">6</text>
+              <text x="163" y="353" text-anchor="middle" font-size="11" fill="#1a2332" font-weight="700" font-family="Noto Sans KR,sans-serif">충남 태안</text>
+            </g>
+            <!-- PIN: 인천 (6건) -->
+            <g class="map-pin" onclick="showRegionDetail('인천')" style="cursor:pointer">
+              <circle cx="200" cy="210" r="24" fill="#3b6ff0" stroke="#fff" stroke-width="3" filter="url(#pinShadow)"/>
+              <text x="200" y="216" text-anchor="middle" font-size="17" font-weight="900" fill="white" font-family="Noto Sans KR,sans-serif">6</text>
+              <text x="200" y="245" text-anchor="middle" font-size="11" fill="#1a2332" font-weight="700" font-family="Noto Sans KR,sans-serif">인천</text>
+            </g>
+            <!-- PIN: 경기 가평 (5건) -->
+            <g class="map-pin" onclick="showRegionDetail('경기 가평')" style="cursor:pointer">
+              <circle cx="395" cy="148" r="23" fill="#f97316" stroke="#fff" stroke-width="3" filter="url(#pinShadow)"/>
+              <text x="395" y="154" text-anchor="middle" font-size="17" font-weight="900" fill="white" font-family="Noto Sans KR,sans-serif">5</text>
+              <text x="395" y="182" text-anchor="middle" font-size="11" fill="#1a2332" font-weight="700" font-family="Noto Sans KR,sans-serif">경기 가평</text>
+            </g>
+            <!-- PIN: 강원 홍천 (3건) -->
+            <g class="map-pin" onclick="showRegionDetail('강원 홍천')" style="cursor:pointer">
+              <circle cx="465" cy="165" r="20" fill="#14b8a6" stroke="#fff" stroke-width="3" filter="url(#pinShadow)"/>
+              <text x="465" y="171" text-anchor="middle" font-size="15" font-weight="900" fill="white" font-family="Noto Sans KR,sans-serif">3</text>
+              <text x="465" y="196" text-anchor="middle" font-size="11" fill="#1a2332" font-weight="700" font-family="Noto Sans KR,sans-serif">강원 홍천</text>
+            </g>
+            <!-- PIN: 경기 양평 (2건) -->
+            <g class="map-pin" onclick="showRegionDetail('경기 양평')" style="cursor:pointer">
+              <circle cx="405" cy="218" r="19" fill="#22c55e" stroke="#fff" stroke-width="3" filter="url(#pinShadow)"/>
+              <text x="405" y="224" text-anchor="middle" font-size="15" font-weight="900" fill="white" font-family="Noto Sans KR,sans-serif">2</text>
+              <text x="405" y="250" text-anchor="middle" font-size="11" fill="#1a2332" font-weight="700" font-family="Noto Sans KR,sans-serif">경기 양평</text>
+            </g>
+            <!-- PIN: 강원 춘천 (1건) -->
+            <g class="map-pin" onclick="showRegionDetail('강원 춘천')" style="cursor:pointer">
+              <circle cx="450" cy="128" r="17" fill="#ec4899" stroke="#fff" stroke-width="3" filter="url(#pinShadow)"/>
+              <text x="450" y="134" text-anchor="middle" font-size="13" font-weight="900" fill="white" font-family="Noto Sans KR,sans-serif">1</text>
+              <text x="450" y="158" text-anchor="middle" font-size="11" fill="#1a2332" font-weight="700" font-family="Noto Sans KR,sans-serif">강원 춘천</text>
+            </g>
+            <!-- PIN: 경기 양주 (1건) -->
+            <g class="map-pin" onclick="showRegionDetail('경기 양주')" style="cursor:pointer">
+              <circle cx="332" cy="148" r="17" fill="#a855f7" stroke="#fff" stroke-width="3" filter="url(#pinShadow)"/>
+              <text x="332" y="154" text-anchor="middle" font-size="13" font-weight="900" fill="white" font-family="Noto Sans KR,sans-serif">1</text>
+              <text x="332" y="178" text-anchor="middle" font-size="11" fill="#1a2332" font-weight="700" font-family="Noto Sans KR,sans-serif">경기 양주</text>
+            </g>
+            <!-- PIN: 경기 남양주 (1건) -->
+            <g class="map-pin" onclick="showRegionDetail('경기 남양주')" style="cursor:pointer">
+              <circle cx="370" cy="210" r="17" fill="#eab308" stroke="#fff" stroke-width="3" filter="url(#pinShadow)"/>
+              <text x="370" y="216" text-anchor="middle" font-size="13" font-weight="900" fill="white" font-family="Noto Sans KR,sans-serif">1</text>
+              <text x="370" y="242" text-anchor="middle" font-size="11" fill="#1a2332" font-weight="700" font-family="Noto Sans KR,sans-serif">경기 남양주</text>
+            </g>
+            <!-- PIN: 강원 횡성 (1건) — 웰리힐리 인근 -->
+            <g class="map-pin" onclick="showRegionDetail('강원 횡성')" style="cursor:pointer">
+              <circle cx="490" cy="200" r="17" fill="#06b6d4" stroke="#fff" stroke-width="3" filter="url(#pinShadow)"/>
+              <text x="490" y="206" text-anchor="middle" font-size="13" font-weight="900" fill="white" font-family="Noto Sans KR,sans-serif">1</text>
+              <text x="490" y="230" text-anchor="middle" font-size="11" fill="#1a2332" font-weight="700" font-family="Noto Sans KR,sans-serif">강원 횡성</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- RIGHT: 행사 목록 -->
+      <div class="map-right-panel">
+        <div class="map-right-header">
+          <span>🏕️ 지역별 행사 목록</span>
+          <span class="map-right-hint">일정순 정렬 · 카드 클릭 시 지도 강조</span>
+        </div>
+        <div class="map-event-list" id="mapEventList"></div>
+      </div>
+    </div>
+    <!-- 하단 범례 -->
+    <div class="map-bottom-legend" id="mapBottomLegend"></div>
+  </div>
+
+  <!-- ===== FULL LIST ===== -->
+  <div id="tab-list" class="tab-pane">
+    <div class="list-filter-panel">
+      <div class="list-filter-row">
+        <span class="list-filter-label">📍 지역</span>
+        <div class="list-region-bar" id="listRegionBar"></div>
+      </div>
+      <div class="list-filter-row">
+        <span class="list-filter-label">📅 출발월</span>
+        <div class="list-month-bar" id="listMonthBar"></div>
+      </div>
+    </div>
+    <div class="full-list-controls">
+      <input class="search-box" type="text" placeholder="학과명 / 장소 / 교원 검색..." oninput="searchFullList(this.value)" id="fullSearchInput">
+      <button class="sort-btn active" id="sortDate" onclick="sortFullList('date',this)">📅 일정순</button>
+      <button class="sort-btn" id="sortDept" onclick="sortFullList('dept',this)">🏫 학과순</button>
+      <span style="margin-left:auto;font-size:12px;color:var(--text2)">총 <b id="listCount">0</b>건 표시</span>
+    </div>
+    <div class="table-card">
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>학과 / 전공</th><th>계획</th><th>출발</th><th>도착</th><th>장소</th><th>인솔교원</th><th>참여 학생</th>
+            </tr>
+          </thead>
+          <tbody id="fullTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- TOOLTIP -->
+<div id="tooltip" style="position:fixed;z-index:9999;background:#1e293b;color:#fff;border-radius:8px;padding:8px 12px;font-size:11.5px;display:none;max-width:280px;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.3);"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+let RAW_DATA = [
+  {dept:"보건의료행정학과",major:"",plan:true,start:"2026-03-13",end:"2026-03-14",place:"인천광역시 강화군 우리바다펜션",teachers:"최미숙 외",students:"1학년 13명/ 19명 참여, 2학년 6명/ 1명 참여",region:"인천",studentCount:20},
+  {dept:"글로벌관광학과",major:"일본비즈니스전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"인천광역시 을왕리",teachers:"서영인, 오현영, 한선영",students:"1학년 : 32명, 2학년 : 3명",region:"인천",studentCount:35},
+  {dept:"멀티디자인학과",major:"산업디자인전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"충청남도 태안군 한양여대만리포 수련원&리조트",teachers:"임창교수 외",students:"1학년 33명 / 2학년 2명 / 3학년 9명",region:"충남 태안",studentCount:44},
+  {dept:"멀티디자인학과",major:"시각디자인전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"충청남도 태안군 한양여대만리포수련원&리조트",teachers:"박진교수 외",students:"1학년 28명 / 2학년 16명 / 3학년4명",region:"충남 태안",studentCount:48},
+  {dept:"의료뷰티학과",major:"뷰티화장품전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"한양여대수련원(만리포)",teachers:"이선영교수 외",students:"1학년 31명/21명 참여 , 2학년 27명/7명 참여",region:"충남 태안",studentCount:28},
+  {dept:"의료뷰티학과",major:"피부메이크업전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"한양여대수련원(만리포)",teachers:"손효정, 김정기, 김혜주",students:"1학년 37명/33명 참여, 2학년 40명/10명 참여",region:"충남 태안",studentCount:43},
+  {dept:"전기공학과",major:"전기공학전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"충청남도 태안군 한양여대만리포수련원&리조",teachers:"이태학(학과장), 이재준(전공대표)",students:"1학년 64명/50명 참여, 2학년 93명/6명 참여",region:"충남 태안",studentCount:56},
+  {dept:"전기공학과",major:"전자공학전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"충청남도 태안군 한양여대만리포수련원&리조",teachers:"이태학(학과장), 박종관(교수)",students:"1학년 27명/20명 참여, 2학년 52명/5명 참여",region:"충남 태안",studentCount:25},
+  {dept:"응급구조과",major:"",plan:true,start:"2026-03-18",end:"2026-03-19",place:"경기도 가평시 오페라 리버 하우스",teachers:"이상훈 외",students:"1학년: 61명/ 51명 참여, 2학년: 26명/ 17명 참여",region:"경기 가평",studentCount:68},
+  {dept:"방송미디어학과",major:"방송영상전공",plan:true,start:"2026-03-21",end:"2026-03-22",place:"춘천시 모토모토컨벤션 강원 춘천시 동면 순환대로 1156-21",teachers:"오민영 외",students:"1학년 67명 / 38명 참여, 2학년 39명 / 13명 참여, 3학년 11명 / 0명 참여",region:"강원 춘천",studentCount:51},
+  {dept:"작업치료과",major:"",plan:true,start:"2026-03-26",end:"2026-03-27",place:"을왕리 어울림펜션",teachers:"최가영 외",students:"1학년 29명/24명 참여, 2학년 21명/17명 참여",region:"인천",studentCount:41},
+  {dept:"호텔외식조리학과",major:"카페베이커리전공",plan:true,start:"2026-03-26",end:"2026-03-27",place:"경기도 가평군 실로암펜션",teachers:"이연정교수, 임상빈교수 외",students:"1학년68명 / 53명참여 , 2학년 61명 /12명참여",region:"경기 가평",studentCount:65},
+  {dept:"호텔외식조리학과",major:"호텔조리전공",plan:true,start:"2026-03-26",end:"2026-03-27",place:"경기도 가평 실로암펜션",teachers:"최원식교수, 조원영교수, 이용권교수 외",students:"1학년 68명 / 55명 참여 예정, 2학년 10명 / 10명 참여 예정",region:"경기 가평",studentCount:65},
+  {dept:"반려동물보건학과",major:"",plan:true,start:"2026-03-27",end:"2026-03-28",place:"강원 홍천군 몬테리오 리조트",teachers:"송근섭 외",students:"1학년 26명/24명, 2학년 23명/7명 참여, 3학년 44명/7명 참여",region:"강원 홍천",studentCount:38},
+  {dept:"방송미디어학과",major:"광고미디어전공",plan:true,start:"2026-03-27",end:"2026-03-28",place:"아트시티펜션 투, 경기 양주시 장흥면 권율로 309번길",teachers:"이성훈교수 외",students:"1학년 37명 / 26명 참여, 2학년 28명 / 10명 참여",region:"경기 양주",studentCount:36},
+  {dept:"방송예술학과",major:"방송문예창작전공",plan:true,start:"2026-03-27",end:"2026-03-28",place:"인천광역시 중구 어울림펜션",teachers:"박병원 외",students:"1학년 41/24 / 2학년 30/15 3학년 24/13",region:"인천",studentCount:52},
+  {dept:"방송예술학과",major:"방송연예전공",plan:true,start:"2026-03-28",end:"2026-03-29",place:"경기 남양주시 은행나무 연수원",teachers:"박주원 외",students:"1학년 39명/ 37명 참여, 2학년 33명/ 30명 참여",region:"경기 남양주",studentCount:67},
+  {dept:"생활디자인학과",major:"실내건축전공",plan:true,start:"2026-04-01",end:"2026-04-02",place:"경기 가평 예정",teachers:"이선민교수 외",students:"1학년 50명, 3학년 10명 예정",region:"경기 가평",studentCount:60},
+  {dept:"글로벌관광학과",major:"호텔관광전공",plan:true,start:"2026-04-02",end:"2026-04-03",place:"인천광역시 을왕리 더위크앤 리조트",teachers:"박소형 외",students:"1학년 40명, 2학년 3명",region:"인천",studentCount:43},
+  {dept:"건강웰니스학과",major:"반려동물산업전공",plan:true,start:"2026-04-03",end:"2026-04-04",place:"강원도 홍천 비발디파크",teachers:"이혜진 외",students:"1학년 54명/40명, 2학년 57명/21명",region:"강원 홍천",studentCount:61},
+  {dept:"건강웰니스학과",major:"스포츠재활전공",plan:true,start:"2026-04-03",end:"2026-04-04",place:"홍천 비발디파크",teachers:"박성욱 외",students:"3학년2명/ 2학년17명/ 1학년51명",region:"강원 홍천",studentCount:70},
+  {dept:"생활디자인학과",major:"패션디자인전공",plan:true,start:"2026-04-03",end:"2026-04-04",place:"강원도 웰리힐리 리조트(예정)",teachers:"김민정교수 외",students:"1학년 35명, 2학년 5명, 3학년 5명",region:"강원 횡성",studentCount:45},
+  {dept:"기계공학과",major:"소방설비안전전공",plan:true,start:"2026-04-10",end:"2026-04-11",place:"을왕리 어울림펜션",teachers:"정재원 외",students:"1학년 35명 / 2학년 10명 참여",region:"인천",studentCount:45},
+  {dept:"항공서비스학과",major:"",plan:true,start:"2026-04-10",end:"2026-04-11",place:"경기도 가평 어피어연수원",teachers:"이현주 외",students:"1학년 59명/43명 참여, 2학년 46명/21명 참여",region:"경기 가평",studentCount:64},
+  {dept:"컴퓨터공학과",major:"게임콘텐츠전공",plan:true,start:"2026-06-23",end:"2026-06-23",place:"경기 양평",teachers:"김태형 외",students:"총 150명 참여",region:"경기 양평",studentCount:150},
+  {dept:"컴퓨터공학과",major:"인공지능전공",plan:true,start:"2026-06-23",end:"2026-06-23",place:"경기 양평",teachers:"이준호 외",students:"총 150명 참여",region:"경기 양평",studentCount:150},
+  {dept:"방송미디어학과",major:"애니메이션웹툰전공",plan:true,start:"2026-09-01",end:"2026-11-30",place:"미정",teachers:"미정",students:"미정",region:"미정",studentCount:0},
+  {dept:"IT정보통신학과",major:"IT비즈니스전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
+  {dept:"IT정보통신학과",major:"컴퓨터정보통신전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
+  {dept:"경영학과",major:"경영정보전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
+  {dept:"경영학과",major:"세무회계전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
+  {dept:"기계공학과",major:"기계시스템전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
+  {dept:"사회서비스학과",major:"아동보육전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
+  {dept:"안전소방학과",major:"산업안전전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
+  {dept:"컴퓨터공학과",major:"컴퓨터소프트웨어전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0}
+];
+
+let REGION_DATA = {
+  '인천':        { count:6,  color:'#3b6ff0', depts:[] },
+  '충남 태안':   { count:6,  color:'#ef4444', depts:[] },
+  '경기 가평':   { count:5,  color:'#f97316', depts:[] },
+  '강원 홍천':   { count:3,  color:'#14b8a6', depts:[] },
+  '경기 양평':   { count:2,  color:'#22c55e', depts:[] },
+  '강원 춘천':   { count:1,  color:'#ec4899', depts:[] },
+  '경기 양주':   { count:1,  color:'#a855f7', depts:[] },
+  '경기 남양주': { count:1,  color:'#eab308', depts:[] },
+  '강원 횡성':   { count:1,  color:'#06b6d4', depts:[] }
+};
+
+const ALL_MAJORS = {
+  '공학':    ['기계시스템전공','전기공학전공','전자공학전공','산업안전전공','산업디자인전공','컴퓨터소프트웨어전공','소방설비안전전공','컴퓨터정보통신전공','IT비즈니스전공','인공지능전공','게임콘텐츠전공','자유전공학과'],
+  '자연과학': ['식품영양학과','유한바이오제약전공','유한생명화공전공','피부메이크업전공','뷰티화장품전공','카페베이커리전공','반려동물보건학과','스포츠재활전공','작업치료과','반려동물산업전공','응급구조과','치위생과','호텔조리전공'],
+  '인문사회': ['호텔관광전공','일본비즈니스전공','경영정보전공','보건의료행정학과','사회복지전공','아동보육전공','세무회계전공','항공경영전공','항공서비스학과'],
+  '예체능':  ['시각디자인전공','애니메이션웹툰전공','패션디자인전공','실내건축전공','광고미디어전공','방송영상전공','방송문예창작전공','방송연예전공']
+};
+
+const DEPT_COLORS = ['#3b6ff0','#ef4444','#f97316','#22c55e','#a855f7','#14b8a6','#eab308','#ec4899','#06b6d4','#84cc16','#f43f5e','#8b5cf6','#0ea5e9','#d97706','#10b981'];
+
+// ── STATE ──────────────────────────────────────────────────────────────
+let deptColorMap = {}, colorIdx = 0;
+let calYear = 2026, calMonth = 2; // 0-indexed: 2=3월
+let calFilterRegion = null;
+let listFilterRegion = null, listMonthFilter = null;
+let dashFilter = 'all', dashSearch = '';
+let fullSort = 'date', fullSearch = '';
+let missingPanelOpen = false;
+let activeRegion = null;
+
+// ── INIT ──────────────────────────────────────────────────────────────
+function initDeptColors() {
+  deptColorMap = {}; colorIdx = 0;
+  RAW_DATA.forEach(d => { if (!deptColorMap[d.dept]) deptColorMap[d.dept] = DEPT_COLORS[colorIdx++ % DEPT_COLORS.length]; });
+}
+function getDeptColor(dept) { return deptColorMap[dept] || '#94a3b8'; }
+
+// ── RENDER ALL ────────────────────────────────────────────────────────
+function renderAll() {
+  deptColorMap = {}; colorIdx = 0;
+  calFilterRegion = null; listFilterRegion = null; listMonthFilter = null;
+  initDeptColors();
+  renderKPIs();
+  renderMonthChart();
+  renderRegionChart();
+  renderDashTable(RAW_DATA);
+  renderFullTable(RAW_DATA);
+  renderListRegionBar();
+  renderListMonthBar();
+  renderCalRegionBar();
+  renderCalendar(calYear, calMonth);
+  renderMapEventList(null);
+  renderMapBottomLegend();
+}
+
+// ── KPIs ──────────────────────────────────────────────────────────────
+function getMissingMajors() {
+  const responded = new Set(RAW_DATA.map(d => (d.major || d.dept)));
+  const missing = {};
+  Object.entries(ALL_MAJORS).forEach(([cat, list]) => {
+    list.forEach(m => { if (!responded.has(m)) { if (!missing[cat]) missing[cat] = []; missing[cat].push(m); } });
+  });
+  return missing;
+}
+
+function renderKPIs() {
+  const yes = RAW_DATA.filter(d => d.plan);
+  const no  = RAW_DATA.filter(d => !d.plan);
+  const now = new Date();
+  const ym  = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const thisMonth = yes.filter(d => d.start && d.start.startsWith(ym)).length;
+  const totalSC   = yes.reduce((s,d) => s + d.studentCount, 0);
+  const missing   = getMissingMajors();
+  const missingCount = Object.values(missing).reduce((s,a) => s+a.length, 0);
+
+  document.getElementById('kpi-total').textContent    = RAW_DATA.length;
+  document.getElementById('kpi-yes').textContent      = yes.length;
+  document.getElementById('kpi-no').textContent       = no.length;
+  document.getElementById('kpi-missing').textContent  = missingCount;
+  document.getElementById('kpi-this-month').textContent = thisMonth;
+  document.getElementById('kpi-students').textContent = totalSC.toLocaleString();
+  const ml = document.getElementById('kpi-month-label');
+  if (ml) ml.textContent = `${now.getMonth()+1}월 기준`;
+
+  // missing panel
+  const grid = document.getElementById('missingGrid');
+  if (grid) {
+    grid.innerHTML = Object.entries(missing).map(([cat, list]) =>
+      `<div><div class="missing-col-title">📌 ${cat} (${list.length})</div>` +
+      list.map(m => `<div class="missing-item">• ${m}</div>`).join('') + `</div>`
+    ).join('');
+  }
+}
+
+function toggleMissingList() {
+  missingPanelOpen = !missingPanelOpen;
+  const p = document.getElementById('missingPanel');
+  if (p) p.classList.toggle('open', missingPanelOpen);
+}
+
+// ── CHARTS ────────────────────────────────────────────────────────────
+function renderMonthChart() {
+  const months = {};
+  RAW_DATA.filter(d => d.plan && d.start).forEach(d => {
+    const m = d.start.slice(0,7);
+    months[m] = (months[m]||0) + 1;
+  });
+  const sorted = Object.entries(months).sort();
+  const max = Math.max(...sorted.map(([,v]) => v), 1);
+  const monthNames = {'01':'1월','02':'2월','03':'3월','04':'4월','05':'5월','06':'6월','07':'7월','08':'8월','09':'9월','10':'10월','11':'11월','12':'12월'};
+  document.getElementById('monthChart').innerHTML = sorted.map(([ym, cnt]) => {
+    const pct = Math.round(cnt/max*100);
+    const label = monthNames[ym.slice(5)] || ym.slice(5);
+    return `<div class="bar-row"><div class="bar-label">${label}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:var(--accent)">${cnt}건</div></div><div class="bar-count">${cnt}</div></div>`;
+  }).join('') || '<div style="color:var(--text2);font-size:12px;padding:8px">데이터 없음</div>';
+}
+
+function renderRegionChart() {
+  const sorted = Object.entries(REGION_DATA).sort((a,b) => b[1].count - a[1].count);
+  const max = Math.max(...sorted.map(([,v]) => v), 1);
+  document.getElementById('regionChart').innerHTML = sorted.map(([r, v]) => {
+    const pct = Math.round(v.count/max*100);
+    return `<div class="bar-row"><div class="bar-label" style="font-size:10.5px">${r}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${v.color}">${v.count}건</div></div><div class="bar-count">${v.count}</div></div>`;
+  }).join('');
+}
+
+// ── DASH TABLE ────────────────────────────────────────────────────────
+function setDashFilter(f, btn) {
+  dashFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDashTable(RAW_DATA);
+}
+
+function renderDashTable(data) {
+  let filtered = [...data];
+  if (dashFilter === 'yes') filtered = filtered.filter(d => d.plan);
+  if (dashFilter === 'no')  filtered = filtered.filter(d => !d.plan);
+  if (dashSearch) {
+    const s = dashSearch.toLowerCase();
+    filtered = filtered.filter(d => (d.dept+d.major+d.place+d.teachers).toLowerCase().includes(s));
+  }
+  filtered.sort((a,b) => {
+    if (a.plan !== b.plan) return a.plan ? -1 : 1;
+    if (!a.start && !b.start) return 0;
+    if (!a.start) return 1; if (!b.start) return -1;
+    return a.start.localeCompare(b.start);
+  });
+  const tbody = document.getElementById('dashTableBody');
+  tbody.innerHTML = filtered.map((d,i) => {
+    const color = getDeptColor(d.dept);
+    const dday = getDDay(d.start);
+    const isPast = dday.startsWith('D+');
+    return `<tr>
+      <td class="row-num">${i+1}</td>
+      <td><div class="dept-name" style="color:${color}">${d.dept}</div>${d.major ? `<div class="major-name">${d.major}</div>` : ''}</td>
+      <td><span class="badge-plan ${d.plan?'badge-yes':'badge-no'}"><span class="badge-dot"></span>${d.plan?'있음':'없음'}</span></td>
+      <td style="white-space:nowrap">${d.start ? `${formatDate(d.start)}<span class="d-day${isPast?' past':''}">${dday}</span> → ${formatDate(d.end)}` : '-'}</td>
+      <td style="max-width:200px;font-size:12px">${d.place||'-'}</td>
+      <td class="teacher-text">${d.teachers||'-'}</td>
+      <td>${d.studentCount>0 ? `<span class="student-count">총 ${d.studentCount}명</span>` : '-'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────
+function renderCalRegionBar() {
+  const bar = document.getElementById('calRegionBar');
+  if (!bar) return;
+  const sorted = Object.entries(REGION_DATA).sort((a,b) => b[1].count - a[1].count);
+  bar.innerHTML =
+    (calFilterRegion ? `<div class="cal-region-bar-top"><span class="cal-region-bar-label">📍 <b>${calFilterRegion}</b> 지역 필터 중</span><button class="cal-region-reset" onclick="setCalRegionFilter(null)">✕ 전체 보기</button></div>` : '') +
+    `<div class="cal-region-chips-row">` +
+    sorted.map(([name, info]) => {
+      const isActive = calFilterRegion === name;
+      const bg = isActive ? info.color : 'var(--surface)';
+      const fg = isActive ? '#fff' : info.color;
+      return `<div class="cal-region-chip" style="border-color:${info.color};background:${bg};color:${fg}" onclick="setCalRegionFilter('${name}')">
+        <div class="cal-region-chip-dot" style="background:${isActive?'rgba(255,255,255,.8)':info.color}"></div>
+        ${name}<span class="cal-region-chip-cnt">${info.count}개</span>
+      </div>`;
+    }).join('') + `</div>`;
+}
+
+function setCalRegionFilter(r) { calFilterRegion = r; renderCalRegionBar(); renderCalendar(calYear, calMonth); }
+function changeMonth(d) { calMonth += d; if (calMonth > 11) { calMonth=0; calYear++; } if (calMonth < 0) { calMonth=11; calYear--; } renderCalendar(calYear, calMonth); }
+
+function renderCalendar(y, m) {
+  calYear = y; calMonth = m;
+  const months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  document.getElementById('calMonthTitle').textContent = `${y}년 ${months[m]}`;
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const dayBadges = ['1일','2일','3일','4일','5일','6일','7일'];
+
+  const calSource = calFilterRegion
+    ? RAW_DATA.filter(d => d.plan && d.start && d.region === calFilterRegion)
+    : RAW_DATA.filter(d => d.plan && d.start);
+
+  const eventMap = {};
+  calSource.forEach(ev => {
+    if (!ev.start || !ev.end) return;
+    const s = new Date(ev.start), e = new Date(ev.end);
+    for (let dt = new Date(s); dt <= e; dt.setDate(dt.getDate()+1)) {
+      const key = dt.toISOString().slice(0,10);
+      if (!eventMap[key]) eventMap[key] = [];
+      const dayIdx = Math.round((dt - s) / 86400000) + 1;
+      eventMap[key].push({ data: ev, dayIdx });
+    }
+  });
+
+  const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+  let html = '';
+  const todayDate = new Date();
+  const todayKey = `${todayDate.getFullYear()}-${String(todayDate.getMonth()+1).padStart(2,'0')}-${String(todayDate.getDate()).padStart(2,'0')}`;
+
+  for (let i = 0; i < totalCells; i++) {
+    let day, isOther = false;
+    if (i < firstDay) { day = new Date(y, m, 0).getDate() - firstDay + i + 1; isOther = true; }
+    else if (i >= firstDay + daysInMonth) { day = i - firstDay - daysInMonth + 1; isOther = true; }
+    else { day = i - firstDay + 1; }
+    const actualY = isOther ? (i < firstDay ? (m===0?y-1:y) : (m===11?y+1:y)) : y;
+    const actualM = isOther ? (i < firstDay ? (m===0?11:m-1) : (m===11?0:m+1)) : m;
+    const dateKey = `${actualY}-${String(actualM+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const isToday = dateKey === todayKey;
+    const dow = i % 7;
+    const evItems = eventMap[dateKey] || [];
+    const evHtml = evItems.map(({data: ev, dayIdx}) => {
+      const color = getDeptColor(ev.dept);
+      const badge = dayIdx <= 7 ? `<span class="ev-day-badge" style="background:${color};color:#fff">${dayBadges[dayIdx-1]}</span>` : '';
+      const label = ev.major || ev.dept;
+      return `<div class="cal-event" style="background:${color}18;border-left:3px solid ${color}" title="${ev.dept} ${ev.major}">${badge}<span style="color:${color};font-weight:700;overflow:hidden;text-overflow:ellipsis">${label}</span></div>`;
+    }).join('');
+
+    html += `<div class="cal-cell${isOther?' other-month':''}${isToday?' today':''}${dow===0?' sun':dow===6?' sat':''}">
+      <div class="cal-date-num">${day}</div>${evHtml}</div>`;
+  }
+  document.getElementById('calBody').innerHTML = html;
+
+  // legend
+  const legendDepts = [...new Set(calSource.map(d => d.dept))];
+  document.getElementById('calLegend').innerHTML =
+    `<span class="cal-legend-label">🏫 학과</span>` +
+    legendDepts.map(d => `<div class="cal-legend-item"><div class="cal-legend-dot" style="background:${getDeptColor(d)}"></div>${d}</div>`).join('');
+  renderCalRegionBar();
+}
+
+// ── MAP ────────────────────────────────────────────────────────────────
+function renderMapEventList(highlightRegion) {
+  const list = document.getElementById('mapEventList');
+  if (!list) return;
+  const sorted = Object.entries(REGION_DATA).sort((a,b) => b[1].count - a[1].count);
+  let html = '';
+  sorted.forEach(([regionName, info]) => {
+    const events = RAW_DATA.filter(d => d.plan && d.region === regionName)
+      .sort((a,b) => (a.start||'').localeCompare(b.start||''));
+    const isHL = highlightRegion === regionName;
+    html += `<div class="map-region-section" id="section-${regionName.replace(/ /g,'_')}">
+      <div class="map-region-section-header" style="${isHL ? `background:${info.color}12;border-left:4px solid ${info.color}` : 'border-left:4px solid transparent'}">
+        <div class="map-region-section-dot" style="background:${info.color}"></div>
+        <div class="map-region-section-name">${regionName}</div>
+        <div class="map-region-section-count">${events.length}개</div>
+      </div>`;
+    events.forEach((ev, idx) => {
+      const color = info.color;
+      const sf = ev.start ? ev.start.slice(5).replace('-','/') : '-';
+      const ef = ev.end && ev.end !== ev.start ? ev.end.slice(5).replace('-','/') : '';
+      const ds = ef ? `${sf} → ${ef}` : sf;
+      const isLast = idx === events.length - 1;
+      html += `<div class="map-ev-card${isLast?' map-ev-card-last':''}" style="border-left:3px solid ${color}" onclick="showRegionDetail('${regionName}')">
+        <div class="map-ev-card-dept" style="color:${color}">${ev.dept}</div>
+        ${ev.major ? `<div class="map-ev-card-major">${ev.major}</div>` : ''}
+        <div class="map-ev-card-row"><span class="map-ev-card-row-icon">📅</span><span>${ds}</span></div>
+        ${ev.place ? `<div class="map-ev-card-row"><span class="map-ev-card-row-icon">📍</span><span>${ev.place}</span></div>` : ''}
+        ${ev.teachers ? `<div class="map-ev-card-row"><span class="map-ev-card-row-icon">👤</span><span>${ev.teachers}</span></div>` : ''}
+        ${ev.studentCount > 0 ? `<div class="map-ev-card-students">🎓 총 ${ev.studentCount}명 참여 예정</div>` : ''}
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  list.innerHTML = html;
+}
+
+function showRegionDetail(region) {
+  activeRegion = region;
+  renderMapEventList(region);
+  setTimeout(() => {
+    const list = document.getElementById('mapEventList');
+    const section = document.getElementById('section-' + region.replace(/ /g,'_'));
+    if (list && section) list.scrollTo({ top: section.offsetTop, behavior: 'smooth' });
+  }, 60);
+  // highlight bottom chips
+  document.querySelectorAll('.map-bottom-chip').forEach(c => {
+    const isActive = c.dataset.region === region;
+    c.style.boxShadow = isActive ? `0 0 0 2px ${REGION_DATA[region]?.color||'#999'}` : '';
+    c.style.fontWeight = isActive ? '800' : '';
+    c.style.background = isActive ? (REGION_DATA[region]?.color||'#999') + '15' : '';
+  });
+}
+
+function renderMapBottomLegend() {
+  const container = document.getElementById('mapBottomLegend');
+  if (!container) return;
+  const sorted = Object.entries(REGION_DATA).sort((a,b) => b[1].count - a[1].count);
+  container.innerHTML = `<div class="map-bottom-legend-title">🗺️ 지역별 행사 현황 — 클릭 시 목록 강조</div>` +
+    sorted.map(([name, info]) =>
+      `<div class="map-bottom-chip" data-region="${name}" style="border-color:${info.color};color:${info.color}" onclick="showRegionDetail('${name}')">
+        <div class="map-bottom-chip-dot" style="background:${info.color}"></div>
+        <span class="map-bottom-chip-name">${name}</span>
+        <span class="map-bottom-chip-count">${info.count}개 학과</span>
+      </div>`
+    ).join('');
+}
+
+// ── FULL LIST ──────────────────────────────────────────────────────────
+function renderListRegionBar() {
+  const bar = document.getElementById('listRegionBar');
+  if (!bar) return;
+  const sorted = Object.entries(REGION_DATA).sort((a,b) => b[1].count - a[1].count);
+  bar.innerHTML = sorted.map(([name, info]) => {
+    const isActive = listFilterRegion === name;
+    const bg = isActive ? info.color : 'var(--surface)';
+    const fg = isActive ? '#fff' : info.color;
+    return `<div class="cal-region-chip" style="border-color:${info.color};background:${bg};color:${fg}" onclick="setListRegionFilter('${name}')">
+      <div class="cal-region-chip-dot" style="background:${isActive?'rgba(255,255,255,.8)':info.color}"></div>
+      ${name} <span class="cal-region-chip-cnt">${info.count}개</span>
+    </div>`;
+  }).join('') +
+  (listFilterRegion ? `<button class="month-reset" onclick="setListRegionFilter(null)">✕ 전체</button>` : '');
+}
+
+function setListRegionFilter(r) { listFilterRegion = r; renderListRegionBar(); renderFullTable(RAW_DATA); }
+
+function renderListMonthBar() {
+  const bar = document.getElementById('listMonthBar');
+  if (!bar) return;
+  const monthMap = {};
+  RAW_DATA.filter(d => d.plan && d.start).forEach(d => {
+    const ym = d.start.slice(0,7);
+    monthMap[ym] = (monthMap[ym]||0) + 1;
+  });
+  const months = Object.entries(monthMap).sort((a,b) => a[0].localeCompare(b[0]));
+  if (!months.length) { bar.innerHTML = ''; return; }
+  bar.innerHTML = months.map(([ym, cnt]) => {
+    const isActive = listMonthFilter === ym;
+    const m = parseInt(ym.split('-')[1]);
+    return `<div class="month-chip${isActive?' active':''}" onclick="setListMonthFilter('${ym}')">${m}월 <span class="month-chip-cnt">${cnt}건</span></div>`;
+  }).join('') +
+  (listMonthFilter ? `<button class="month-reset" onclick="setListMonthFilter(null)">✕ 전체</button>` : '');
+}
+
+function setListMonthFilter(ym) { listMonthFilter = ym; renderListMonthBar(); renderFullTable(RAW_DATA); }
+
+function searchFullList(s) { fullSearch = s; renderFullTable(RAW_DATA); }
+function sortFullList(s, btn) {
+  fullSort = s;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFullTable(RAW_DATA);
+}
+
+function renderFullTable(data) {
+  let filtered = [...data];
+  if (listFilterRegion) filtered = filtered.filter(d => d.region === listFilterRegion);
+  if (listMonthFilter) filtered = filtered.filter(d => d.start && d.start.startsWith(listMonthFilter));
+  if (fullSearch) {
+    const s = fullSearch.toLowerCase();
+    filtered = filtered.filter(d => (d.dept+d.major+d.place+d.teachers).toLowerCase().includes(s));
+  }
+  if (fullSort === 'date') {
+    filtered.sort((a,b) => {
+      if (a.plan !== b.plan) return a.plan ? -1 : 1;
+      if (!a.start && !b.start) return 0;
+      if (!a.start) return 1; if (!b.start) return -1;
+      return a.start.localeCompare(b.start);
+    });
+  } else {
+    filtered.sort((a,b) => {
+      if (a.plan !== b.plan) return a.plan ? -1 : 1;
+      return (a.dept+a.major).localeCompare(b.dept+b.major);
+    });
+  }
+  const cnt = document.getElementById('listCount');
+  if (cnt) cnt.textContent = filtered.length;
+  const tbody = document.getElementById('fullTableBody');
+  tbody.innerHTML = filtered.map((d,i) => {
+    const color = getDeptColor(d.dept);
+    const dday = getDDay(d.start);
+    const isPast = dday.startsWith('D+');
+    return `<tr>
+      <td class="row-num">${i+1}</td>
+      <td><div class="dept-name" style="color:${color}">${d.dept}</div>${d.major?`<div class="major-name">${d.major}</div>`:''}</td>
+      <td><span class="badge-plan ${d.plan?'badge-yes':'badge-no'}"><span class="badge-dot"></span>${d.plan?'있음':'없음'}</span></td>
+      <td style="white-space:nowrap">${d.start?`${formatDate(d.start)}<span class="d-day${isPast?' past':''}">${dday}</span>`:'-'}</td>
+      <td style="white-space:nowrap">${d.end?formatDate(d.end):'-'}</td>
+      <td style="max-width:200px;font-size:12px">${d.place||'-'}</td>
+      <td class="teacher-text">${d.teachers||'-'}</td>
+      <td>${d.studentCount>0?`<span class="student-count">총 ${d.studentCount}명</span>`:'-'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────
+function getDDay(dateStr) {
+  if (!dateStr) return '';
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = new Date(dateStr);
+  const diff = Math.ceil((target - today) / 86400000);
+  if (diff > 0) return `D-${diff}`;
+  if (diff === 0) return 'D-Day';
+  return `D+${Math.abs(diff)}`;
+}
+
+function formatDate(s) {
+  if (!s) return '-';
+  const [y,m,d] = s.split('-');
+  return `${parseInt(m)}/${parseInt(d)}`;
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── LOCAL STORAGE ─────────────────────────────────────────────────────
+function loadSavedData() {
+  try {
+    const saved = localStorage.getItem('yuhanEventDataV3');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.RAW_DATA && parsed.RAW_DATA.length >= RAW_DATA.length) {
+        RAW_DATA = parsed.RAW_DATA;
+        REGION_DATA = parsed.REGION_DATA;
+        if (parsed.timestamp) document.getElementById('updateTime').textContent = parsed.timestamp;
+      } else {
+        localStorage.removeItem('yuhanEventDataV3');
+      }
+    }
+  } catch(e) { console.warn('로드 실패:', e); }
+}
+
+function saveData(ts) {
+  try {
+    localStorage.setItem('yuhanEventDataV3', JSON.stringify({ RAW_DATA, REGION_DATA, timestamp: ts }));
+  } catch(e) { console.warn('저장 실패:', e); }
+}
+
+// ── CSV UPLOAD ────────────────────────────────────────────────────────
+function handleCSV(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const text = ev.target.result;
+      const result = parseCSV(text);
+      if (!result || result.rows.length === 0) { showToast('❌ CSV 파싱 실패: 유효한 데이터가 없습니다.', 'error'); return; }
+      RAW_DATA = result.rows;
+      REGION_DATA = result.regions;
+      const now = '업데이트: ' + new Date().toLocaleString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
+      document.getElementById('updateTime').textContent = now;
+      renderAll();
+      saveData(now);
+      showToast(`✅ ${result.rows.length}개 전공 데이터 로드 완료`);
+    } catch(err) { showToast('❌ 오류: ' + err.message, 'error'); }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return null;
+  const headers = csvSplitLine(lines[0]).map(h => h.trim());
+  const col = {
+    dept: findCol(headers, ['학과']),
+    plan: findCol(headers, ['계획 유무','유무','계획']),
+    start: findCol(headers, ['출발일','1. 출발']),
+    end: findCol(headers, ['도착일','2. 도착']),
+    place: findCol(headers, ['소재지','장소']),
+    teachers: findCol(headers, ['인솔교원']),
+    students: findCol(headers, ['학생수','참여예상','학생']),
+  };
+  const RMAP = [
+    [/충청남도?\s*태안|만리포|태안군/,'충남 태안'],
+    [/경기도?\s*가평|가평\s*예정|실로암|오페라\s*리버|어피어/,'경기 가평'],
+    [/경기도?\s*양평|양평/,'경기 양평'],
+    [/경기도?\s*양주|장흥면|아트시티펜션/,'경기 양주'],
+    [/경기도?\s*남양주|남양주|은행나무\s*연수원/,'경기 남양주'],
+    [/강원도?\s*홍천|홍천|비발디파크|몬테리오/,'강원 홍천'],
+    [/춘천|모토모토/,'강원 춘천'],
+    [/웰리힐리|횡성/,'강원 횡성'],
+    [/인천광역시?|을왕리|강화군|어울림펜션|더위크앤/,'인천'],
+  ];
+  function exRegion(p) {
+    if (!p||p==='미정') return '미정';
+    for (const [re,label] of RMAP) if (re.test(p)) return label;
+    return '미정';
+  }
+  function pDate(s) {
+    if (!s) return '';
+    const m = s.match(/(\d{4})[.\-]\s*(\d{1,2})[.\-]\s*(\d{1,2})/);
+    return m ? `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}` : '';
+  }
+  function pStudents(s) {
+    if (!s||s.includes('미정')) return 0;
+    const t = s.match(/총\s*(\d+)명/); if (t) return parseInt(t[1]);
+    const pairs = [...s.matchAll(/(\d+)명\/(\d+)명/g)];
+    if (pairs.length) return pairs.reduce((sum,m) => sum+parseInt(m[2]),0);
+    const slash = [...s.matchAll(/(\d+)\/(\d+)/g)];
+    if (slash.length) return slash.reduce((sum,m) => sum+parseInt(m[2]),0);
+    const nums = [...s.matchAll(/(\d+)명/g)];
+    if (nums.length) return nums.reduce((sum,m) => sum+parseInt(m[1]),0);
+    return 0;
+  }
+  const rows = [];
+  const seen = {};
+  for (let i = 1; i < lines.length; i++) {
+    const vals = csvSplitLine(lines[i]);
+    if (vals.length < 3) continue;
+    const v = k => (k >= 0 ? (vals[k]||'') : '').trim();
+    const deptRaw = v(col.dept);
+    const mRe = deptRaw.match(/^(.+?(?:학과|학부|과))\s+(.+)$/);
+    const dept = mRe ? mRe[1] : deptRaw;
+    const major = mRe ? mRe[2] : '';
+    const plan = v(col.plan).includes('계획') || v(col.plan).includes('있');
+    const start = pDate(v(col.start)), end = pDate(v(col.end));
+    const place = v(col.place), teachers = v(col.teachers), students = v(col.students);
+    const region = plan ? exRegion(place) : '미정';
+    const studentCount = pStudents(students);
+    const key = dept + '||' + major;
+    const score = [start,place,teachers].filter(Boolean).length + (studentCount>0?1:0);
+    if (!seen[key] || score >= seen[key].score) seen[key] = { dept,major,plan,start,end,place,teachers,students,region,studentCount, score };
+  }
+  const finalRows = Object.values(seen).map(({score,...e}) => e);
+  finalRows.sort((a,b) => (a.start||'z').localeCompare(b.start||'z'));
+  const regionGroups = {};
+  const RC = ['#ef4444','#f97316','#3b6ff0','#22c55e','#14b8a6','#a855f7','#eab308','#ec4899','#06b6d4','#84cc16'];
+  let rci = 0;
+  finalRows.filter(d => d.plan && d.region !== '미정').forEach(d => {
+    if (!regionGroups[d.region]) regionGroups[d.region] = { count:0, color:RC[rci++%RC.length], depts:[] };
+    regionGroups[d.region].count++;
+  });
+  const regions = Object.fromEntries(Object.entries(regionGroups).sort((a,b) => b[1].count - a[1].count));
+  return { rows: finalRows, regions };
+}
+
+function findCol(headers, keywords) {
+  for (const kw of keywords) { const i = headers.findIndex(h => h.includes(kw)); if (i >= 0) return i; }
+  return -1;
+}
+
+function csvSplitLine(line) {
+  const result = []; let cur = '', inQ = false;
+  for (const ch of line) {
+    if (ch === '"') { inQ = !inQ; }
+    else if (ch === ',' && !inQ) { result.push(cur); cur = ''; }
+    else { cur += ch; }
+  }
+  result.push(cur);
+  return result;
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────
+function showToast(msg, type='success') {
+  let t = document.getElementById('csvToast');
+  if (!t) {
+    t = document.createElement('div'); t.id = 'csvToast';
+    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:12px 22px;border-radius:10px;font-size:13px;font-weight:700;z-index:9999;opacity:1;transition:opacity .5s;pointer-events:none;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = type === 'success' ? '#166534' : '#991b1b';
+  t.style.color = '#fff'; t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3500);
+}
+
+// ── PRINT ─────────────────────────────────────────────────────────────
+function printCurrentTab() {
+  const pane = document.querySelector('.tab-pane.active');
+  const tabId = pane ? pane.id.replace('tab-','') : 'dashboard';
+  const isLandscape = tabId === 'calendar' || tabId === 'map';
+  const labels = { dashboard:'대시보드', calendar:'캘린더', map:'지도', list:'전체 목록' };
+  const dateEl = document.getElementById('printDate');
+  if (dateEl) dateEl.textContent = `[${labels[tabId]||tabId}] 인쇄일: ${new Date().toLocaleString('ko-KR',{year:'numeric',month:'long',day:'numeric'})}`;
+  if (tabId === 'map') { const el = document.getElementById('mapEventList'); if (el) el.scrollTop = 0; }
+  let styleEl = document.getElementById('print-page-style');
+  if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'print-page-style'; document.head.appendChild(styleEl); }
+  styleEl.textContent = isLandscape ? '@media print { @page { size: A4 landscape; margin: 10mm 12mm; } }' : '@media print { @page { size: A4 portrait; margin: 14mm 12mm; } }';
+  document.body.classList.toggle('print-landscape', isLandscape);
+  window.print();
+  setTimeout(() => document.body.classList.remove('print-landscape'), 1000);
+}
+
+// ── STARTUP ───────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadSavedData();
+  initDeptColors();
+  renderAll();
+});
+</script>
+</body>
+</html>
