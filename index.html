@@ -151,7 +151,47 @@ tr:hover td { background: #f8fafc; }
   cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   display: flex; align-items: center; gap: 3px;
 }
-.cal-event:hover { opacity: .85; }
+.cal-event:hover { opacity: .85; transform: translateY(-1px); transition: all .1s; }
+
+/* ── CAL POPUP ── */
+.cal-popup-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9000;
+  background: rgba(15,23,42,.35); backdrop-filter: blur(2px);
+}
+.cal-popup-overlay.open { display: flex; align-items: center; justify-content: center; }
+.cal-popup {
+  background: var(--surface); border-radius: 18px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.22);
+  padding: 0; width: 420px; max-width: 95vw;
+  overflow: hidden; animation: popIn .18s ease;
+}
+@keyframes popIn { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.cal-popup-header {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.cal-popup-color-bar { width: 5px; border-radius: 3px; align-self: stretch; flex-shrink: 0; }
+.cal-popup-title-block { flex: 1; }
+.cal-popup-dept { font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 3px; }
+.cal-popup-major { font-size: 16px; font-weight: 900; color: var(--text1); line-height: 1.2; }
+.cal-popup-close {
+  background: var(--bg); border: none; border-radius: 8px;
+  width: 28px; height: 28px; cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2); flex-shrink: 0; margin-top: 2px;
+}
+.cal-popup-close:hover { background: var(--border); }
+.cal-popup-body { padding: 16px 22px 20px; display: flex; flex-direction: column; gap: 10px; }
+.cal-popup-row { display: flex; align-items: flex-start; gap: 10px; }
+.cal-popup-icon { font-size: 15px; width: 22px; flex-shrink: 0; margin-top: 1px; }
+.cal-popup-label { font-size: 10.5px; font-weight: 800; color: var(--text2); min-width: 44px; margin-top: 2px; flex-shrink: 0; }
+.cal-popup-val { font-size: 12.5px; color: var(--text1); line-height: 1.5; flex: 1; }
+.cal-popup-dday {
+  display: inline-block; font-size: 11px; font-weight: 900;
+  border-radius: 6px; padding: 2px 8px; margin-left: 8px;
+  vertical-align: middle;
+}
 .ev-day-badge { font-size: 9px; font-weight: 900; border-radius: 4px; padding: 0 3px; flex-shrink: 0; }
 .cal-legend { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .cal-legend-label { font-size: 11px; font-weight: 800; color: var(--text2); margin-right: 4px; }
@@ -650,53 +690,57 @@ body.print-landscape .map-img-wrap { min-height: 280px !important; }
 <script>
 // ── DATA ──────────────────────────────────────────────────────────────
 let RAW_DATA = [
-  {dept:"보건의료행정학과",major:"",plan:true,start:"2026-03-13",end:"2026-03-14",place:"인천광역시 강화군 우리바다펜션",teachers:"최미숙 외",students:"1학년 13명/ 19명 참여, 2학년 6명/ 1명 참여",region:"인천",studentCount:20},
-  {dept:"글로벌관광학과",major:"일본비즈니스전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"인천광역시 을왕리",teachers:"서영인, 오현영, 한선영",students:"1학년 : 32명, 2학년 : 3명",region:"인천",studentCount:35},
-  {dept:"멀티디자인학과",major:"산업디자인전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"충청남도 태안군 한양여대만리포 수련원&리조트",teachers:"임창교수 외",students:"1학년 33명 / 2학년 2명 / 3학년 9명",region:"충남 태안",studentCount:44},
-  {dept:"멀티디자인학과",major:"시각디자인전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"충청남도 태안군 한양여대만리포수련원&리조트",teachers:"박진교수 외",students:"1학년 28명 / 2학년 16명 / 3학년4명",region:"충남 태안",studentCount:48},
-  {dept:"의료뷰티학과",major:"뷰티화장품전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"한양여대수련원(만리포)",teachers:"이선영교수 외",students:"1학년 31명/21명 참여 , 2학년 27명/7명 참여",region:"충남 태안",studentCount:28},
-  {dept:"의료뷰티학과",major:"피부메이크업전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"한양여대수련원(만리포)",teachers:"손효정, 김정기, 김혜주",students:"1학년 37명/33명 참여, 2학년 40명/10명 참여",region:"충남 태안",studentCount:43},
+  {dept:"보건의료행정학과",major:"",plan:true,start:"2026-03-13",end:"2026-03-14",place:"인천광역시 강화군 우리바다펜션",teachers:"임영아, 손태용, 정현정, 손지민, 안효은",students:"1학년 13명/ 19명 참여, 2학년 6명/ 1명 참여",region:"인천",studentCount:20},
   {dept:"전기공학과",major:"전기공학전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"충청남도 태안군 한양여대만리포수련원&리조",teachers:"이태학(학과장), 이재준(전공대표)",students:"1학년 64명/50명 참여, 2학년 93명/6명 참여",region:"충남 태안",studentCount:56},
   {dept:"전기공학과",major:"전자공학전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"충청남도 태안군 한양여대만리포수련원&리조",teachers:"이태학(학과장), 박종관(교수)",students:"1학년 27명/20명 참여, 2학년 52명/5명 참여",region:"충남 태안",studentCount:25},
-  {dept:"응급구조과",major:"",plan:true,start:"2026-03-18",end:"2026-03-19",place:"경기도 가평시 오페라 리버 하우스",teachers:"이상훈 외",students:"1학년: 61명/ 51명 참여, 2학년: 26명/ 17명 참여",region:"경기 가평",studentCount:68},
-  {dept:"방송미디어학과",major:"방송영상전공",plan:true,start:"2026-03-21",end:"2026-03-22",place:"춘천시 모토모토컨벤션 강원 춘천시 동면 순환대로 1156-21",teachers:"오민영 외",students:"1학년 67명 / 38명 참여, 2학년 39명 / 13명 참여, 3학년 11명 / 0명 참여",region:"강원 춘천",studentCount:51},
-  {dept:"작업치료과",major:"",plan:true,start:"2026-03-26",end:"2026-03-27",place:"을왕리 어울림펜션",teachers:"최가영 외",students:"1학년 29명/24명 참여, 2학년 21명/17명 참여",region:"인천",studentCount:41},
-  {dept:"호텔외식조리학과",major:"카페베이커리전공",plan:true,start:"2026-03-26",end:"2026-03-27",place:"경기도 가평군 실로암펜션",teachers:"이연정교수, 임상빈교수 외",students:"1학년68명 / 53명참여 , 2학년 61명 /12명참여",region:"경기 가평",studentCount:65},
-  {dept:"호텔외식조리학과",major:"호텔조리전공",plan:true,start:"2026-03-26",end:"2026-03-27",place:"경기도 가평 실로암펜션",teachers:"최원식교수, 조원영교수, 이용권교수 외",students:"1학년 68명 / 55명 참여 예정, 2학년 10명 / 10명 참여 예정",region:"경기 가평",studentCount:65},
-  {dept:"반려동물보건학과",major:"",plan:true,start:"2026-03-27",end:"2026-03-28",place:"강원 홍천군 몬테리오 리조트",teachers:"송근섭 외",students:"1학년 26명/24명, 2학년 23명/7명 참여, 3학년 44명/7명 참여",region:"강원 홍천",studentCount:38},
-  {dept:"방송미디어학과",major:"광고미디어전공",plan:true,start:"2026-03-27",end:"2026-03-28",place:"아트시티펜션 투, 경기 양주시 장흥면 권율로 309번길",teachers:"이성훈교수 외",students:"1학년 37명 / 26명 참여, 2학년 28명 / 10명 참여",region:"경기 양주",studentCount:36},
-  {dept:"방송예술학과",major:"방송문예창작전공",plan:true,start:"2026-03-27",end:"2026-03-28",place:"인천광역시 중구 어울림펜션",teachers:"박병원 외",students:"1학년 41/24 / 2학년 30/15 3학년 24/13",region:"인천",studentCount:52},
-  {dept:"방송예술학과",major:"방송연예전공",plan:true,start:"2026-03-28",end:"2026-03-29",place:"경기 남양주시 은행나무 연수원",teachers:"박주원 외",students:"1학년 39명/ 37명 참여, 2학년 33명/ 30명 참여",region:"경기 남양주",studentCount:67},
-  {dept:"생활디자인학과",major:"실내건축전공",plan:true,start:"2026-04-01",end:"2026-04-02",place:"경기 가평 예정",teachers:"이선민교수 외",students:"1학년 50명, 3학년 10명 예정",region:"경기 가평",studentCount:60},
-  {dept:"글로벌관광학과",major:"호텔관광전공",plan:true,start:"2026-04-02",end:"2026-04-03",place:"인천광역시 을왕리 더위크앤 리조트",teachers:"박소형 외",students:"1학년 40명, 2학년 3명",region:"인천",studentCount:43},
-  {dept:"건강웰니스학과",major:"반려동물산업전공",plan:true,start:"2026-04-03",end:"2026-04-04",place:"강원도 홍천 비발디파크",teachers:"이혜진 외",students:"1학년 54명/40명, 2학년 57명/21명",region:"강원 홍천",studentCount:61},
-  {dept:"건강웰니스학과",major:"스포츠재활전공",plan:true,start:"2026-04-03",end:"2026-04-04",place:"홍천 비발디파크",teachers:"박성욱 외",students:"3학년2명/ 2학년17명/ 1학년51명",region:"강원 홍천",studentCount:70},
-  {dept:"생활디자인학과",major:"패션디자인전공",plan:true,start:"2026-04-03",end:"2026-04-04",place:"강원도 웰리힐리 리조트(예정)",teachers:"김민정교수 외",students:"1학년 35명, 2학년 5명, 3학년 5명",region:"강원 횡성",studentCount:45},
-  {dept:"기계공학과",major:"소방설비안전전공",plan:true,start:"2026-04-10",end:"2026-04-11",place:"을왕리 어울림펜션",teachers:"정재원 외",students:"1학년 35명 / 2학년 10명 참여",region:"인천",studentCount:45},
-  {dept:"항공서비스학과",major:"",plan:true,start:"2026-04-10",end:"2026-04-11",place:"경기도 가평 어피어연수원",teachers:"이현주 외",students:"1학년 59명/43명 참여, 2학년 46명/21명 참여",region:"경기 가평",studentCount:64},
-  {dept:"컴퓨터공학과",major:"게임콘텐츠전공",plan:true,start:"2026-06-23",end:"2026-06-23",place:"경기 양평",teachers:"김태형 외",students:"총 150명 참여",region:"경기 양평",studentCount:150},
-  {dept:"컴퓨터공학과",major:"인공지능전공",plan:true,start:"2026-06-23",end:"2026-06-23",place:"경기 양평",teachers:"이준호 외",students:"총 150명 참여",region:"경기 양평",studentCount:150},
+  {dept:"글로벌관광학과",major:"일본비즈니스전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"인천광역시 을왕리",teachers:"서영인, 오현영, 한선영",students:"1학년 : 32명, 2학년 : 3명",region:"인천",studentCount:35},
+  {dept:"의료뷰티학과",major:"피부메이크업전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"한양여대수련원(만리포)",teachers:"손효정, 김정기, 김혜주",students:"1학년 37명/33명 참여, 2학년 40명/10명 참여",region:"충남 태안",studentCount:43},
+  {dept:"의료뷰티학과",major:"뷰티화장품전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"한양여대수련원(만리포)",teachers:"손효정 김정기 김혜주",students:"1학년 31명/21명 참여 , 2학년 27명/7명 참여",region:"충남 태안",studentCount:28},
+  {dept:"멀티디자인학과",major:"시각디자인전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"충청남도 태안군 한양여대만리포수련원&리조트",teachers:"차은수 박한진 변유정",students:"1학년 28명 / 2학년 16명 / 3학년4명",region:"충남 태안",studentCount:48},
+  {dept:"멀티디자인학과",major:"산업디자인전공",plan:true,start:"2026-03-17",end:"2026-03-18",place:"충청남도 태안군 한양여대만리포 수련원&리조트",teachers:"심민섭, 박기남, 최용혁, 김두현, 변유정",students:"1학년 33명 / 2학년 2명 / 3학년 9명",region:"충남 태안",studentCount:44},
+  {dept:"응급구조과",major:"",plan:true,start:"2026-03-18",end:"2026-03-19",place:"경기도 가평시 오페라 리버 하우스",teachers:"박시현 교수, 조지연 교수, 김성호 교수, 김세윤 조교",students:"1학년: 61명/ 51명 참여   ,    2학년: 26명/ 17명 참여",region:"경기 가평",studentCount:68},
+  {dept:"방송미디어학과",major:"방송영상전공",plan:true,start:"2026-03-21",end:"2026-03-22",place:"춘천시 모토모토컨벤션 / 강원 춘천시 동면 순환대로 1156-21 1층",teachers:"이형곤 조교수, 유태준 조교",students:"1학년 67명 / 38명 참여, 2학년 39명 / 13명 참여, 3학년 11명 / 0명 참여",region:"강원 춘천",studentCount:51},
+  {dept:"호텔외식조리학과",major:"호텔조리전공",plan:true,start:"2026-03-26",end:"2026-03-27",place:"경기도 가평군 실로암 펜션",teachers:"학과장 최원식 교수님 외 5명, 집행부 6명, 도우미 4명",students:"1학년  30명 /  28명 , 2학년 10명 참여",region:"경기 가평",studentCount:68},
+  {dept:"호텔외식조리학과",major:"카페베이커리전공",plan:true,start:"2026-03-26",end:"2026-03-27",place:"경기도 가평군 실로암펜션",teachers:"교수님:6명 학생회:12명",students:"1학년68명 / 53명참여 , 2학년 61명 /12명참여",region:"경기 가평",studentCount:65},
+  {dept:"작업치료과",major:"",plan:true,start:"2026-03-26",end:"2026-03-27",place:"을왕리 어울림펜션",teachers:"최현세, 장태용, 방소영",students:"1학년 29명/24명 참여, 2학년 21명/17명 참여, 3학년 20명/14명 참여",region:"인천",studentCount:55},
+  {dept:"식품영양학과",major:"",plan:true,start:"2026-03-26",end:"2026-03-27",place:"가평 화수목펜션",teachers:"홍지혜, 김영태",students:"(현재 수요조사 중) 총 40명 정도 예상",region:"경기 가평",studentCount:40},
+  {dept:"반려동물보건학과",major:"",plan:true,start:"2026-03-27",end:"2026-03-28",place:"강원 홍천군 몬테리오 리조트",teachers:"윤서연 교수, 김수현 교수",students:"1학년 26명/24명, 2학년 23명/7명 참여,3학년 44명/7명 참여",region:"강원 홍천",studentCount:14},
+  {dept:"방송미디어학과",major:"광고미디어전공",plan:true,start:"2026-03-27",end:"2026-03-28",place:"아트시티펜션 투 , 경기 양주시 장흥면 권율로 309번길 33",teachers:"한계숙 부교수, 박정선 조교수, 유태준 조교",students:"1학년 37명 / 26명 참여, 2학년 28명 / 10명 참여, 3학년 23명 / 3명 참여",region:"경기 양주",studentCount:39},
+  {dept:"방송예술학과",major:"방송문예창작전공",plan:true,start:"2026-03-27",end:"2026-03-28",place:"인천광역시 중구 어울림펜션",teachers:"교수: 김민혜, 최희진 / 조교: 임교완",students:"1학년 41/24 / 2학년 30/15 3학년 24/13",region:"인천",studentCount:52},
+  {dept:"방송예술학과",major:"방송연예전공",plan:true,start:"2026-03-28",end:"2026-03-29",place:"경기 남양주시 은행나무 연수원",teachers:"박아인 교수님, 봉다룬 교수님, 장진주 교수님, 양훈철 교수님, 박민 교수님(밤에만 참석), 지수아 교수님(밤에만 참석)",students:"1학년 39명/ 37명 참여, 2학년 33명/ 30명 참여",region:"경기 양주",studentCount:67},
+  {dept:"생활디자인학과",major:"실내건축전공",plan:true,start:"2026-04-01",end:"2026-04-02",place:"가평 예정",teachers:"오정아, 이규홍, 장은지, 조성형, 노혜정, 권이랑조교 예정",students:"1학년 50명, 3학년 10명 예정",region:"경기 가평",studentCount:60},
+  {dept:"글로벌관광학과",major:"호텔관광전공",plan:true,start:"2026-04-02",end:"2026-04-03",place:"인천광역시 을왕리 더위크앤 리조트",teachers:"서진우, 하인수, 최호수, 한혜윤",students:"1학년 40명, 2학년 3명",region:"인천",studentCount:43},
+  {dept:"건강웰니스학과",major:"반려동물산업전공",plan:true,start:"2026-04-03",end:"2026-04-04",place:"강원도 홍천 비발디파크",teachers:"홍기태 교수님",students:"1학년 54명/40명, 2학년 57명/21명",region:"강원 홍천",studentCount:172},
+  {dept:"건강웰니스학과",major:"스포츠재활전공",plan:true,start:"2026-04-03",end:"2026-04-04",place:"홍천 비발디파크",teachers:"양광모 교수님, 김지빈 교수님, 김태호 교수님, 문도윤 조교님",students:"3학년2명/ 2학년17명/ 1학년51명",region:"강원 홍천",studentCount:70},
+  {dept:"생활디자인학과",major:"패션디자인전공",plan:true,start:"2026-04-03",end:"2026-04-04",place:"강원도 웰리힐리 리조트(예정)",teachers:"주미영. 강성욱. 이종길 (예정)",students:"수요조사시 50명 예정이였음. 확정아님. 1학년 35명. 2학년 5명. 3학년 5명. 4학년 2명.",region:"강원 횡성",studentCount:97},
+  {dept:"자유전공학과",major:"",plan:true,start:"2026-04-03",end:"2026-04-04",place:"홍천 비발디파크",teachers:"1. 교수님: 정예지, 이수연 / 2. 담당자: 최지원 ... 총 3명",students:"1학년 총 46명(복학생 1명 포함) / 25명 참여",region:"강원 홍천",studentCount:46},
+  {dept:"건강웰니스학과",major:"사회복지전공",plan:true,start:"2026-04-03",end:"2026-04-04",place:"소노벨 비발디파트",teachers:"7명",students:"1학년 58명/30명 참여 , 2학년 68명/ 15명 참여 , 3학년 63명/11명 참여 , 4학년 51명/5명 참여",region:"강원 홍천",studentCount:61},
+  {dept:"항공서비스학과",major:"",plan:true,start:"2026-04-10",end:"2026-04-11",place:"경기도 가평 어피어연수원",teachers:"대표교원: 임현주교수, 참여예정 교원: 김태우, 조현정교수",students:"1학년 59명/43명 참여, 2학년 46명/21명 참여",region:"경기 가평",studentCount:64},
+  {dept:"기계공학과",major:"소방설비안전전공",plan:true,start:"2026-04-10",end:"2026-04-11",place:"을왕리 어울림펜션",teachers:"송재엽교수님, 정연승교수님, 최상곤교수님",students:"1학년 35명 / 2학년 10명 참여",region:"인천",studentCount:45},
+  {dept:"유한생명바이오학과",major:"유한바이오제약전공",plan:true,start:"2026-05-08",end:"2026-05-09",place:"원주힐링파크",teachers:"김대규 학과장님, 이석원 교수님, 정성환 교수님, 이용권 처장님, 김정복 교수님",students:"약 1학년 60명, 2학년 15명",region:"강원 횡성",studentCount:75},
+  {dept:"유한생명바이오학과",major:"유한생명화공전공",plan:true,start:"2026-05-08",end:"2026-05-09",place:"원주힐링파크",teachers:"김대규 학과장님, 이석원 교수님, 정성환 교수님, 이용권 처장님, 김정복 교수님",students:"약 1학년 10명",region:"강원 횡성",studentCount:10},
+  {dept:"컴퓨터공학과",major:"게임콘텐츠전공",plan:true,start:"2026-06-23",end:"2026-06-23",place:"양평",teachers:"김영철, 이성현, 이윤임",students:"150",region:"경기 양평",studentCount:150},
+  {dept:"컴퓨터공학과",major:"인공지능전공",plan:true,start:"2026-06-23",end:"2026-06-23",place:"양평",teachers:"금득규 교수님, 심효선 교수님, 이동수 교수님",students:"컴공과(소프트웨어, 게임콘텐츠, 인공지능) 총 150명 참여",region:"경기 양평",studentCount:150},
   {dept:"방송미디어학과",major:"애니메이션웹툰전공",plan:true,start:"2026-09-01",end:"2026-11-30",place:"미정",teachers:"미정",students:"미정",region:"미정",studentCount:0},
-  {dept:"IT정보통신학과",major:"IT비즈니스전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
+  {dept:"컴퓨터공학과",major:"컴퓨터소프트웨어전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
   {dept:"IT정보통신학과",major:"컴퓨터정보통신전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
+  {dept:"IT정보통신학과",major:"IT비즈니스전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
+  {dept:"안전소방학과",major:"산업안전전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
+  {dept:"사회서비스학과",major:"아동보육전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
   {dept:"경영학과",major:"경영정보전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
   {dept:"경영학과",major:"세무회계전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
-  {dept:"기계공학과",major:"기계시스템전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
-  {dept:"사회서비스학과",major:"아동보육전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
-  {dept:"안전소방학과",major:"산업안전전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0},
-  {dept:"컴퓨터공학과",major:"컴퓨터소프트웨어전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0}
+  {dept:"기계공학과",major:"기계시스템전공",plan:false,start:"",end:"",place:"",teachers:"",students:"",region:"미정",studentCount:0}
 ];
 
 let REGION_DATA = {
-  '인천':        { count:6,  color:'#3b6ff0', depts:[] },
-  '충남 태안':   { count:6,  color:'#ef4444', depts:[] },
-  '경기 가평':   { count:5,  color:'#f97316', depts:[] },
-  '강원 홍천':   { count:3,  color:'#14b8a6', depts:[] },
-  '경기 양평':   { count:2,  color:'#22c55e', depts:[] },
-  '강원 춘천':   { count:1,  color:'#ec4899', depts:[] },
-  '경기 양주':   { count:1,  color:'#a855f7', depts:[] },
-  '경기 남양주': { count:1,  color:'#eab308', depts:[] },
-  '강원 횡성':   { count:1,  color:'#06b6d4', depts:[] }
+  '인천':		{ count:6,  color:'#3b6ff0', depts:[] },
+  '충남 태안':		{ count:6,  color:'#ef4444', depts:[] },
+  '경기 가평':		{ count:6,  color:'#f97316', depts:[] },
+  '강원 홍천':		{ count:5,  color:'#14b8a6', depts:[] },
+  '강원 횡성':		{ count:3,  color:'#06b6d4', depts:[] },
+  '경기 양주':		{ count:2,  color:'#a855f7', depts:[] },
+  '경기 양평':		{ count:2,  color:'#22c55e', depts:[] },
+  '강원 춘천':		{ count:1,  color:'#eab308', depts:[] }
 };
 
 const ALL_MAJORS = {
@@ -919,7 +963,7 @@ function renderCalendar(y, m) {
       const color = getDeptColor(ev.dept);
       const badge = dayIdx <= 7 ? `<span class="ev-day-badge" style="background:${color};color:#fff">${dayBadges[dayIdx-1]}</span>` : '';
       const label = ev.major || ev.dept;
-      return `<div class="cal-event" style="background:${color}18;border-left:3px solid ${color}" title="${ev.dept} ${ev.major}">${badge}<span style="color:${color};font-weight:700;overflow:hidden;text-overflow:ellipsis">${label}</span></div>`;
+      return `<div class="cal-event" style="background:${color}18;border-left:3px solid ${color}" title="${ev.dept} ${ev.major}" onclick="showCalPopup(${RAW_DATA.indexOf(ev)})">${badge}<span style="color:${color};font-weight:700;overflow:hidden;text-overflow:ellipsis">${label}</span></div>`;
     }).join('');
 
     html += `<div class="cal-cell${isOther?' other-month':''}${isToday?' today':''}${dow===0?' sun':dow===6?' sat':''}">
@@ -1091,11 +1135,49 @@ function renderFullTable(data) {
 }
 
 // ── HELPERS ────────────────────────────────────────────────────────────
+function showCalPopup(idx) {
+  const d = RAW_DATA[idx];
+  if (!d) return;
+  const color = getDeptColor(d.dept);
+  const dday = d.start ? getDDay(d.start) : '';
+  const ddayColor = dday.startsWith('D+') ? '#94a3b8' : dday === 'D-Day' ? '#ef4444' : '#3b6ff0';
+
+  document.getElementById('calPopupColorBar').style.background = color;
+  document.getElementById('calPopupDept').textContent = d.dept;
+  document.getElementById('calPopupMajor').innerHTML =
+    (d.major || d.dept) +
+    (dday ? `<span class="cal-popup-dday" style="background:${ddayColor}18;color:${ddayColor};border:1px solid ${ddayColor}40">${dday}</span>` : '');
+
+  // 날짜
+  const startFmt = d.start ? formatDate(d.start) : '-';
+  const endFmt   = d.end   ? formatDate(d.end)   : '';
+  const nights = (d.start && d.end && d.start !== d.end)
+    ? (() => { const s=new Date(...d.start.split('-').map(Number).map((v,i)=>i===1?v-1:v)); const e=new Date(...d.end.split('-').map(Number).map((v,i)=>i===1?v-1:v)); return Math.round((e-s)/86400000); })()
+    : 0;
+  const nightStr = nights > 0 ? ` (${nights}박${nights+1}일)` : ' (당일)';
+  document.getElementById('calPopupDate').innerHTML =
+    `${startFmt}${endFmt && endFmt !== startFmt ? ' → ' + endFmt : ''}${nightStr}`;
+
+  document.getElementById('calPopupPlace').textContent    = d.place    || '-';
+  document.getElementById('calPopupTeachers').textContent = d.teachers || '-';
+  document.getElementById('calPopupStudents').textContent = d.students || '-';
+
+  document.getElementById('calPopupOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCalPopup(e) {
+  if (e && e.target !== document.getElementById('calPopupOverlay')) return;
+  document.getElementById('calPopupOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCalPopup(); });
+
 function getDDay(dateStr) {
   if (!dateStr) return '';
   const today = new Date(); today.setHours(0,0,0,0);
-  const target = new Date(dateStr);
-  const diff = Math.ceil((target - today) / 86400000);
+  const [y,mo,d] = dateStr.split('-').map(Number);
+  const target = new Date(y, mo-1, d);
+  const diff = Math.round((target - today) / 86400000);
   if (diff > 0) return `D-${diff}`;
   if (diff === 0) return 'D-Day';
   return `D+${Math.abs(diff)}`;
@@ -1293,5 +1375,40 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAll();
 });
 </script>
+<!-- 캘린더 세부정보 팝업 -->
+<div class="cal-popup-overlay" id="calPopupOverlay" onclick="closeCalPopup(event)">
+  <div class="cal-popup" onclick="event.stopPropagation()">
+    <div class="cal-popup-header">
+      <div class="cal-popup-color-bar" id="calPopupColorBar"></div>
+      <div class="cal-popup-title-block">
+        <div class="cal-popup-dept" id="calPopupDept"></div>
+        <div class="cal-popup-major" id="calPopupMajor"></div>
+      </div>
+      <button class="cal-popup-close" onclick="closeCalPopup()">✕</button>
+    </div>
+    <div class="cal-popup-body">
+      <div class="cal-popup-row">
+        <span class="cal-popup-icon">📅</span>
+        <span class="cal-popup-label">일정</span>
+        <span class="cal-popup-val" id="calPopupDate"></span>
+      </div>
+      <div class="cal-popup-row">
+        <span class="cal-popup-icon">📍</span>
+        <span class="cal-popup-label">장소</span>
+        <span class="cal-popup-val" id="calPopupPlace"></span>
+      </div>
+      <div class="cal-popup-row">
+        <span class="cal-popup-icon">👨‍🏫</span>
+        <span class="cal-popup-label">인솔교원</span>
+        <span class="cal-popup-val" id="calPopupTeachers"></span>
+      </div>
+      <div class="cal-popup-row">
+        <span class="cal-popup-icon">👩‍🎓</span>
+        <span class="cal-popup-label">참여학생</span>
+        <span class="cal-popup-val" id="calPopupStudents"></span>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
